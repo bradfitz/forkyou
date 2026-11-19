@@ -8,6 +8,13 @@ It is built on [rsc.io/cmd/review](https://pkg.go.dev/rsc.io/cmd/review):
 its diff engine, its "due to rebase" detection, its templates, styles, and
 Gerrit keyboard shortcuts.
 
+## Why
+
+I'm sick of GitHub constantly making their web UI slower, worse, and
+spammier. I don't want your "New Experience ❇️"; I want Gerrit. I want
+snapshots. I want range diffs. I want to compare any rev against any rev.
+I want speed.
+
 ## Running
 
     go install github.com/bradfitz/forkyou@latest
