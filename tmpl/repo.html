@@ -6,5 +6,6 @@
   </div>
   {{if not .Items}}<p class="empty">No open pull requests.</p>{{end}}
   {{template "prlist" .Items}}
+  {{if eq (len .Items) 100}}<p class="hint">The 100 most recently updated open pull requests. <a href="https://github.com/{{.Owner}}/{{.Repo}}/pulls">All of them on GitHub</a>.</p>{{end}}
 </main>
 {{template "foot" .}}

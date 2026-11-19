@@ -145,7 +145,20 @@ func (s *server) getPR(ctx context.Context, k PRKey, maxAge time.Duration) (*PR,
 	if e.pr != nil && time.Since(e.pr.FetchedAt) < maxAge {
 		return e.pr, nil
 	}
-	pr, err := s.loadPR(ctx, k)
+	// The load is not tied to the request: a reviewer who clicks away
+	// mid-load would otherwise kill the git fetch, and the next visit
+	// would find a pull request with none of its commits.
+	lctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Minute)
+	defer cancel()
+	pr, err := s.loadPR(lctx, k)
+	if err == nil && !slices.ContainsFunc(pr.Snapshots, func(sn *Snapshot) bool { return !sn.Missing }) {
+		// Nothing could be fetched, which is likely to be a passing
+		// failure. Say so, but keep no copy of it.
+		if e.pr != nil {
+			return e.pr, nil
+		}
+		return pr, nil
+	}
 	if err == nil && e.pr != nil {
 		// File contents and diffs are named by commit IDs, which never
 		// change, so whatever the last load read is still good.
@@ -628,7 +641,11 @@ type repoPage struct {
 
 func (s *server) repoPage(w http.ResponseWriter, req *http.Request) error {
 	owner, repo := req.PathValue("owner"), req.PathValue("repo")
-	pulls, err := GetAll[GHPull](req.Context(), s.gh, fmt.Sprintf("/repos/%s/%s/pulls?state=open&per_page=100", owner, repo))
+	// The most recently updated hundred: one page, one request. A busy
+	// repository has hundreds open, and paging through them all is slow
+	// for a list nobody reads to the end of.
+	var pulls []GHPull
+	err := s.gh.Get(req.Context(), fmt.Sprintf("/repos/%s/%s/pulls?state=open&sort=updated&direction=desc&per_page=100", owner, repo), &pulls)
 	if err != nil {
 		return err
 	}
