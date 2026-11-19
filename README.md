@@ -83,17 +83,3 @@ marked reviewed, later visits default to showing what changed since then.
   limit. Thread resolution and publishing use GraphQL.
 - Local state (drafts, reviewed marks, preferences) is plain JSON files
   under `$XDG_CONFIG_HOME/forkyou` (default `~/.config/forkyou`).
-
-## Testing
-
-    go test
-
-The tests run the real server against a fake GitHub (REST and GraphQL)
-backed by a local git repository, covering snapshots across a rebase and
-force push, rebase-aware diffs, and publishing drafts to the places GitHub
-allows.
-
-## License
-
-BSD-style; see LICENSE. Portions are from rsc.io/cmd/review, copyright
-The Go Authors.
