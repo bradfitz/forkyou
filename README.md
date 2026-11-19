@@ -11,9 +11,13 @@ Gerrit keyboard shortcuts.
 ## Why
 
 I'm sick of GitHub constantly making their web UI slower, worse, and
-spammier. I don't want your "New Experience ❇️"; I want Gerrit. I want
+spammier. I don't want your "New Experience ✨"; I want Gerrit. I want
 snapshots. I want range diffs. I want to compare any rev against any rev.
 I want speed.
+
+Thanks to GitHub for giving me the t-shirt and naming inspiration:
+
+![Brad in a "fork you" GitHub shirt, next to a "go fmt yourself" shirt](doc/fork-you-go-fmt-yourself-shirts.jpeg)
 
 ## Running
 
