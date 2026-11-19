@@ -963,3 +963,6 @@ pre.rangediff {
 .rdnew { background: var(--dark-add-highlight-color); }
 .rdctxadd { background: var(--light-add-highlight-color); }
 .rdctxdel { background: var(--light-remove-highlight-color); }
+/* GitHub's HTML carries its own line breaks; pre-wrap would add its
+ * indentation and blank lines too. */
+.comment .body.markdown, .convitem .body.markdown { white-space: normal; }

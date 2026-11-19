@@ -7,7 +7,10 @@
 
 package main
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"html/template"
+)
 
 // The keyboard shortcuts are Gerrit's, taken from
 // polygerrit-ui/app/services/shortcuts/shortcuts-config.ts, minus the
@@ -101,6 +104,7 @@ var keyHelp = []keySection{{
 		{Keys: []string{"["}, Action: "prevFile", Text: "Go to previous file, or up to the file list"},
 		{Keys: []string{"J"}, Action: "nextFileWithComments", Text: "Go to next file that has comments"},
 		{Keys: []string{"K"}, Action: "prevFileWithComments", Text: "Go to previous file that has comments"},
+		{Keys: []string{"a"}, Action: "openReply", Text: "Reply and publish drafts"},
 		{Keys: []string{","}, Action: "diffPrefs", Text: "Show diff preferences"},
 		{Keys: []string{"u"}, Action: "openFileList", Text: "Up to the pull request"},
 	},
@@ -122,11 +126,11 @@ var keyHelp = []keySection{{
 
 // keyMapJSON is the shortcut table as JSON, embedded in every page so that
 // keys.js dispatches from the same table the help dialog is rendered from.
-func keyMapJSON() string {
+func keyMapJSON() template.JS {
 	data, err := json.Marshal(keyHelp)
 	if err != nil {
 		// The table is a constant; marshaling it cannot fail in practice.
 		panic(err)
 	}
-	return string(data)
+	return template.JS(data)
 }

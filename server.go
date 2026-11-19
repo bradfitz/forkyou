@@ -556,7 +556,7 @@ func (s *server) home(w http.ResponseWriter, req *http.Request) error {
 func (s *server) goURL(w http.ResponseWriter, req *http.Request) error {
 	u := req.FormValue("u")
 	if req.URL.Path != "/go" {
-		u = req.URL.Path
+		u = strings.TrimPrefix(req.URL.Path, "/")
 	}
 	u = strings.TrimSpace(u)
 	u = strings.TrimPrefix(u, "https://")
