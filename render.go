@@ -51,6 +51,7 @@ var tmpl = template.Must(template.New("").Funcs(template.FuncMap{
 		return strings.ToLower(s)
 	},
 	"html_safe": func(s string) template.HTML { return template.HTML(s) },
+	"msgHTML":   msgHTML,
 	"sub":       func(a, b int) int { return a - b },
 	"snapArg": func(p *filesPage, s *snapRow) map[string]any {
 		return map[string]any{"URL": p.X("snapreviewed") + "?n=" + strconv.Itoa(s.N), "Reviewed": s.Reviewed}
@@ -164,8 +165,9 @@ func sideClass(r *renderRow, name string, changed, rebased bool) string {
 }
 
 // lineHTML renders one line of a diff, marking the byte ranges that changed
-// within the line and any trailing whitespace.
-func lineHTML(text string, spans []Span) template.HTML {
+// within the line and any trailing whitespace. If link is not nil, it is
+// applied to each run of escaped text, to add links.
+func lineHTML(text string, spans []Span, link func(string) string) template.HTML {
 	if text == "" {
 		return ""
 	}
@@ -211,6 +213,9 @@ func lineHTML(text string, spans []Span) template.HTML {
 			class += "ws"
 		}
 		seg := template.HTMLEscapeString(text[lo:hi])
+		if link != nil {
+			seg = link(seg)
+		}
 		if class == "" {
 			b.WriteString(seg)
 			continue
@@ -235,7 +240,7 @@ func inSpans(spans []Span, i int) bool {
 // them. range-diff indents a diff of the two patches by four spaces; its
 // first column says whether the line is in the old patch only, the new
 // patch only, or both, and the second is the patch's own marker.
-func rangeDiffHTML(out string) template.HTML {
+func rangeDiffHTML(out string, link func(string) string) template.HTML {
 	var b strings.Builder
 	for _, line := range strings.Split(strings.TrimRight(out, "\n"), "\n") {
 		class := ""
@@ -264,6 +269,9 @@ func rangeDiffHTML(out string) template.HTML {
 			class = "rdctxdel"
 		}
 		esc := template.HTMLEscapeString(line)
+		if link != nil {
+			esc = link(esc)
+		}
 		if class == "" {
 			b.WriteString(`<div class="rdline">` + esc + "\n</div>")
 		} else {

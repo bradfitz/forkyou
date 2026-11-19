@@ -39,6 +39,7 @@ func TestParseBody(t *testing.T) {
 
 func TestCommitMsgComments(t *testing.T) {
 	e, _, p2 := setupRebase(t)
+	_ = p2
 	f := e.f
 
 	// The message is the first file, a new file against the parent.
@@ -50,6 +51,19 @@ func TestCommitMsgComments(t *testing.T) {
 	if !strings.Contains(diff, "widget: improve") {
 		t.Fatalf("/COMMIT_MSG diff lacks the message")
 	}
+	// Issue references in it are links.
+	f.git(f.work, "commit", "-q", "--amend", "-m", "widget: improve\n\nUpdates #42\nFixes tailscale/corp#7")
+	f.pushHead(true)
+	diff = e.get(e.pr + "/diff?f=%2FCOMMIT_MSG&refresh=1")
+	for _, want := range []string{`href="https://github.com/acme/widget/issues/42">#42</a>`, `href="https://github.com/tailscale/corp/issues/7">tailscale/corp#7</a>`} {
+		if !strings.Contains(diff, want) {
+			t.Errorf("/COMMIT_MSG diff lacks link %s", want)
+		}
+	}
+	f.git(f.work, "commit", "-q", "--amend", "-m", "widget: improve")
+	f.pushHead(true)
+	e.get(e.pr + "?refresh=1")
+	p2 = f.headSHA()
 
 	w := e.post(e.pr+"/x/comment?f=%2FCOMMIT_MSG", url.Values{"side": {"right"}, "line": {"1"}, "body": {"Say what improved."}})
 	if !strings.Contains(w.Body.String(), "Say what improved.") {
@@ -104,14 +118,14 @@ func TestCommitMsgComments(t *testing.T) {
 	// Reword the message, keeping the subject, and force-push.
 	f.git(f.work, "commit", "-q", "--amend", "-m", "widget: improve\n\nNow it says why.")
 	f.pushHead(true)
-	cmp := e.get(e.pr + "/diff?f=%2FCOMMIT_MSG&base=2&s=3&refresh=1")
+	cmp := e.get(e.pr + "/diff?f=%2FCOMMIT_MSG&base=4&s=5&refresh=1")
 	if !strings.Contains(cmp, "Now it says why.") || !strings.Contains(cmp, `class="diffrow insert`) {
 		t.Errorf("snapshot 2 to 3 /COMMIT_MSG diff does not show the new message")
 	}
 	if !strings.Contains(cmp, "Say what improved.") {
 		t.Errorf("comment on the old message is not carried to the new version")
 	}
-	rd := e.get(e.pr + "/rangediff?base=2&s=3")
+	rd := e.get(e.pr + "/rangediff?base=4&s=5")
 	if !strings.Contains(rd, "Commit message") || !strings.Contains(rd, "Now it says why.") {
 		t.Errorf("range-diff does not show the reworded message:\n%s", text(rd))
 	}

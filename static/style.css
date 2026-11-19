@@ -1007,3 +1007,5 @@ details.commitblock.reviewed .csubj { color: var(--gray-700); }
 .chip.changedchip { background: var(--orange-50); color: var(--orange-900); }
 .commitnav { gap: 10px; }
 .commitblock details.cmsgd > summary { cursor: pointer; color: var(--gray-500); font-size: 11px; margin: 2px 0; }
+/* Issue references in commit messages: links, but in the text's own face. */
+a.issueref { font-family: inherit; }

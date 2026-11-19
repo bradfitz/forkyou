@@ -253,7 +253,7 @@
   </summary>
   {{if .Files}}
   <div class="commitbody">
-    {{with .Body}}<details class="cmsgd"><summary>commit message</summary><pre class="cmsg">{{.}}</pre></details>{{end}}
+    {{with .Body}}<details class="cmsgd"><summary>commit message</summary><pre class="cmsg">{{msgHTML . $.P}}</pre></details>{{end}}
     <table class="filelist commitfiles">
       <tbody>
       {{range .Files}}

@@ -362,6 +362,9 @@ func (p *prPage) CommitAnchor(sha string) string {
 	return p.PRURL() + "?s=" + strconv.Itoa(p.Target.N) + "#c-" + sha
 }
 
+// linkRefs links the issue references in escaped commit message text.
+func (p *prPage) linkRefs(s string) string { return linkIssueRefs(s, p.Key.Owner, p.Key.Repo) }
+
 // PP returns p, for templates given a page that embeds it.
 func (p *prPage) PP() *prPage { return p }
 
@@ -940,10 +943,14 @@ func hasThread(leftAt, rightAt map[int][]*Thread) func(Row) bool {
 // renderRows turns diff rows into rendered rows, attaching comment threads.
 func (p *prPage) renderRows(rows []Row, leftAt, rightAt map[int][]*Thread) []*renderRow {
 	var out []*renderRow
+	var link func(string) string
+	if isCommitMsg(p.FileParam) {
+		link = p.linkRefs
+	}
 	for _, row := range rows {
 		rr := &renderRow{Row: row}
-		rr.LeftHTML = lineHTML(row.L.Text, row.L.Spans)
-		rr.RightHTML = lineHTML(row.R.Text, row.R.Spans)
+		rr.LeftHTML = lineHTML(row.L.Text, row.L.Spans, link)
+		rr.RightHTML = lineHTML(row.R.Text, row.R.Spans, link)
 		if row.L.Num > 0 {
 			rr.LeftThreads = leftAt[row.L.Num]
 		}
@@ -1095,7 +1102,7 @@ func (s *server) rangeDiffPage(w http.ResponseWriter, req *http.Request, k PRKey
 	if err != nil {
 		p.Error = err.Error()
 	} else {
-		p.HTML = rangeDiffHTML(out)
+		p.HTML = rangeDiffHTML(out, pp.linkRefs)
 	}
 	return render(w, "rangediff.html", p)
 }
