@@ -1,0 +1,18 @@
+{{template "head" .}}
+<main class="rangediffpage">
+  <div id="viewinfo" hidden data-pr="{{.PRURL}}" data-base="{{.BaseN}}" data-target="{{.TargetN}}" data-latest="{{.LatestN}}" data-file=""></div>
+  <div class="pagehead">
+    <div>
+      <h1>range-diff{{if .Base}}: snapshot {{.Base.N}} → {{.Target.N}}{{end}}</h1>
+      <div class="byline"><a href="{{.FilesURL}}">{{.PR.Pull.Title}} #{{.Key.Number}}</a></div>
+    </div>
+  </div>
+  {{template "baseselect" .}}
+  {{if .Error}}<p class="note">{{.Error}}</p>{{end}}
+  {{if .HTML}}
+  <p class="hint">The output of <code>git range-diff {{.Base.ShortBase}}..{{.Base.ShortRev}} {{.Target.ShortBase}}..{{.Target.ShortRev}}</code>:
+  each commit of snapshot {{.Base.N}} paired with its counterpart in snapshot {{.Target.N}}, and a diff of the two patches where they differ.</p>
+  <pre class="rangediff">{{.HTML}}</pre>
+  {{end}}
+</main>
+{{template "foot" .}}

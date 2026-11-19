@@ -1,0 +1,50 @@
+{{template "head" .}}
+<main class="diffpage">
+  <div id="viewinfo" hidden data-pr="{{.PRURL}}" data-base="{{.BaseN}}" data-target="{{.TargetN}}" data-latest="{{.LatestN}}" data-file="{{.FileParam}}"></div>
+  <div class="pagehead">
+    <div>
+      <h1>{{.File.Path}}</h1>
+      <div class="byline"><a href="{{.FilesURL}}">{{.PR.Pull.Title}} #{{.Key.Number}}</a></div>
+    </div>
+    <div class="pageactions">
+      <button id="filecomment" data-get="{{.X "fileform"}}{{.Query "f" .FileParam}}" data-target="#filetop" data-swap="beforeend" title="Comment on the file as a whole">Comment on file</button>
+      {{template "reviewedbutton" (reviewedArg .PP .FileParam .File.Reviewed .FileRebaseOnly)}}
+      <button class="primary" id="replybutton" title="Reply and publish drafts">Reply{{if .DraftCount}} ({{plural .DraftCount "draft"}}){{end}}</button>
+      <button id="prefsbutton" title="Diff preferences (,)">⚙</button>
+    </div>
+  </div>
+
+  {{template "baseselect" .}}
+
+  {{if .ShowRebaseNote}}
+  <p class="note rebasenote">Muted lines came along with a rebase: the base branch changed them, and this pull request only moved onto the new version.</p>
+  {{end}}
+
+  <nav class="filenav">
+    {{if .Prev}}<a id="prevfile" href="{{.Prev.URL}}">← {{.Prev.Name}}</a>{{else}}<span></span>{{end}}
+    <a id="filelistlink" href="{{.FilesURL}}">All files</a>
+    {{if .Next}}<a id="nextfile" href="{{.Next.URL}}">{{.Next.Name}} →</a>{{else}}<span></span>{{end}}
+  </nav>
+
+  <div id="filetop" class="filetop">
+    {{range .Top}}{{template "thread" .}}{{end}}
+  </div>
+
+  {{if .Binary}}
+    <p class="empty">Binary file.</p>
+  {{else if not .Rows}}
+    <p class="empty">No differences.</p>
+  {{else}}
+  <table class="diff{{if .Unified}} unified{{end}}" id="difftable" style="tab-size:{{.TabSize}}" data-form="{{.X "form"}}" data-query="{{.Query "f" .FileParam}}">
+    <colgroup>
+      {{if not .Unified}}<col class="numcol"><col class="codecol">{{end}}
+      <col class="numcol"><col class="codecol">
+    </colgroup>
+    <tbody id="diffbody">{{template "rows" .}}</tbody>
+  </table>
+  {{end}}
+  {{template "replybox" .PP}}
+</main>
+<dialog id="prefs">{{template "prefs" .}}</dialog>
+<script id="filedata" type="application/json">{{.FilesJSON}}</script>
+{{template "foot" .}}

@@ -1,0 +1,93 @@
+{{define "head"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}}</title>
+<link rel="icon" type="image/svg+xml" href="/_/favicon.svg">
+<link rel="stylesheet" href="/_/style.css">
+<script src="/_/app.js" defer></script>
+</head>
+<body data-page="{{.Page}}">
+<header class="topbar">
+  <a class="logo" href="/">forkyou</a>
+  {{if .Key.Owner}}
+  <span class="sep">/</span>
+  <a class="repo" href="{{.RepoURL}}">{{.Key.Owner}}/{{.Key.Repo}}</a>
+  {{end}}
+  {{if .HasKey}}
+  <span class="sep">/</span>
+  <a class="repo" href="{{.Key.URL}}">#{{.Key.Number}}</a>
+  {{end}}
+  {{if .FileName}}
+  <span class="sep">/</span>
+  <span class="file" title="{{.FileName}}">{{.FileName}}</span>
+  {{end}}
+  <span class="spacer"></span>
+  <form class="goform" method="get" action="/go">
+    <input name="u" class="search" type="search" placeholder="Go to PR: owner/repo/pull/N or URL" autocomplete="off" spellcheck="false">
+  </form>
+  <input id="search" class="search" type="search" placeholder="Filter (/)" autocomplete="off" spellcheck="false">
+  {{if .Viewer}}<span class="viewer">{{.Viewer}}</span>{{else}}<span class="viewer anon" title="no GitHub token: run gh auth login or set $GITHUB_TOKEN">not logged in</span>{{end}}
+  <button id="helpbutton" class="linkish" title="Keyboard shortcuts">?</button>
+</header>
+{{end}}
+
+{{define "foot"}}
+<dialog id="help">{{template "help" .}}</dialog>
+<div id="navbar" hidden></div>
+<script id="keymap" type="application/json">{{keyMap}}</script>
+<script src="/_/keys.js" defer></script>
+</body>
+</html>
+{{end}}
+
+{{define "help"}}
+<div class="helpbox">
+  <h2>Keyboard shortcuts</h2>
+  <div class="helpcols">
+  {{range keySections}}
+    <section>
+      <h3>{{.Title}}</h3>
+      <table>
+        {{range .Bindings}}
+        <tr><td class="keys">{{kbd .Keys}}</td><td class="desc">{{.Text}}</td></tr>
+        {{end}}
+      </table>
+    </section>
+  {{end}}
+  </div>
+  <p class="dismiss">Press <kbd>Esc</kbd> to close.</p>
+</div>
+{{end}}
+
+{{define "prefs"}}
+<form class="prefsbox" method="post" action="/prefs">
+  <h2>Diff preferences</h2>
+  <label>Context lines <input type="number" name="context" min="0" max="9999" value="{{.Context}}"></label>
+  <label>Tab width <input type="number" name="tabsize" min="1" max="16" value="{{.TabSize}}"></label>
+  <label><input type="checkbox" name="unified" value="1" {{if .Unified}}checked{{end}}> Unified diff</label>
+  <input type="hidden" name="return" value="{{.SelfURL}}">
+  <div class="formactions">
+    <button type="submit">Save</button>
+    <button type="button" onclick="this.closest('dialog').close()">Cancel</button>
+  </div>
+</form>
+{{end}}
+
+{{define "prlist"}}
+<table class="changelist">
+  <tbody>
+  {{range .}}
+  <tr class="item" data-href="{{.URL}}" data-filter="{{.RepoLabel}} {{.Title}} {{.Author}} {{.Key.Number}}">
+    {{if .RepoLabel}}<td class="repo"><a href="/{{.RepoLabel}}">{{.RepoLabel}}</a></td>{{end}}
+    <td class="num">#{{.Key.Number}}</td>
+    <td class="subject"><a href="{{.URL}}">{{.Title}}</a>{{if .Draft}} <span class="chip working">draft</span>{{end}}</td>
+    <td class="counts">{{if .Drafts}}<span class="chip draftchip">{{plural .Drafts "draft"}}</span>{{end}}</td>
+    <td class="author">{{.Author}}</td>
+    <td class="when">{{since .Updated}}</td>
+  </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}

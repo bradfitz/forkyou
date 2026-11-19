@@ -1,0 +1,752 @@
+[
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594125850",
+    "pull_request_review_id": 5931176755,
+    "id": 4594125850,
+    "node_id": "PRRC_kwDODihR8s8AAAABEdTMGg",
+    "diff_hunk": "@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d\n If you disable or do not configure this policy setting, all devices will be displayed.\n \n Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>\n+\n+<string id=\"HideWindowedUI\">Hide the windowed userinterface</string>",
+    "path": "docs/windows/policy/en-US/tailscale.adml",
+    "commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "original_commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n<string id=\"HideWindowedUI\">Hide the windowed user interface</string>\n```\nor\n\n```suggestion\n<string id=\"HideWindowedUI\">Hide the Windowed UI</string>\n```",
+    "created_at": "2026-11-17T01:35:24Z",
+    "updated_at": "2026-11-17T01:48:45Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594125850",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594125850"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594125850"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">&lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;Hide the windowed <span class=\"x x-first x-last\">userinterface</span>&lt;/<span class=\"pl-ent\">string</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">&lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;Hide the windowed <span class=\"x x-first x-last\">user interface</span>&lt;/<span class=\"pl-ent\">string</span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n\n<p dir=\"auto\">or</p>\n  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">&lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;Hide the <span class=\"x x-first x-last\">windowed userinterface</span>&lt;/<span class=\"pl-ent\">string</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">&lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;Hide the <span class=\"x x-first x-last\">Windowed UI</span>&lt;/<span class=\"pl-ent\">string</span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n",
+    "body_text": "Suggested change\n      \n    \n    \n      \n          \n            \n            <string id=\"HideWindowedUI\">Hide the windowed userinterface</string>\n          \n          \n            \n            <string id=\"HideWindowedUI\">Hide the windowed user interface</string>\n          \n      \n    \n    \n  \n\nor\n  \n    \n      \n        Suggested change\n      \n    \n    \n      \n          \n            \n            <string id=\"HideWindowedUI\">Hide the windowed userinterface</string>\n          \n          \n            \n            <string id=\"HideWindowedUI\">Hide the Windowed UI</string>",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594125850/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 223,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594196043",
+    "pull_request_review_id": 5931176755,
+    "id": 4594196043,
+    "node_id": "PRRC_kwDODihR8s8AAAABEdXeSw",
+    "diff_hunk": "@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d\n If you disable or do not configure this policy setting, all devices will be displayed.\n \n Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>\n+\n+<string id=\"HideWindowedUI\">Hide the windowed userinterface</string>\n+            <string id=\"HideWindowedUI_Help\"><![CDATA[This policy controls whether entry points to the new Tailscale windowed user interface are shown.",
+    "path": "docs/windows/policy/en-US/tailscale.adml",
+    "commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "original_commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "maybe\n```suggestion\n            <string id=\"HideWindowedUI_Help\"><![CDATA[This policy controls whether the the client's windowed interface is available.\n```\n?\n\nI'd prefer to avoid \"new,\" since it won't always be new, and I find \"entry points\" a bit awkward. (Also, is opening the app from the Start menu -- or from the CLI -- an \"entry point\"? Arguably, yes, and configuring this policy setting should prevent that, too)",
+    "created_at": "2026-11-17T01:44:31Z",
+    "updated_at": "2026-11-17T01:48:45Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594196043",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594196043"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594196043"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">maybe</p>\n  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">            &lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI_Help<span class=\"pl-pds\">\"</span></span>&gt;<span class=\"pl-s\"><span class=\"pl-pds\">&lt;![CDATA[</span>This policy controls whether <span class=\"x x-first x-last\">entry points to </span>the <span class=\"x x-first x-last\">new Tailscale </span>windowed <span class=\"x x-first x-last\">user </span>interface <span class=\"x x-first x-last\">are shown</span>.</span></td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">            &lt;<span class=\"pl-ent\">string</span> <span class=\"pl-e\">id</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI_Help<span class=\"pl-pds\">\"</span></span>&gt;<span class=\"pl-s\"><span class=\"pl-pds\">&lt;![CDATA[</span>This policy controls whether <span class=\"x x-first x-last\">the </span>the <span class=\"x x-first x-last\">client's </span>windowed interface <span class=\"x x-first x-last\">is available</span>.</span></td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n\n<p dir=\"auto\">?</p>\n<p dir=\"auto\">I'd prefer to avoid \"new,\" since it won't always be new, and I find \"entry points\" a bit awkward. (Also, is opening the app from the Start menu -- or from the CLI -- an \"entry point\"? Arguably, yes, and configuring this policy setting should prevent that, too)</p>",
+    "body_text": "maybe\n  \n    \n      \n        Suggested change\n      \n    \n    \n      \n          \n            \n                        <string id=\"HideWindowedUI_Help\"><![CDATA[This policy controls whether entry points to the new Tailscale windowed user interface are shown.\n          \n          \n            \n                        <string id=\"HideWindowedUI_Help\"><![CDATA[This policy controls whether the the client's windowed interface is available.\n          \n      \n    \n    \n  \n\n?\nI'd prefer to avoid \"new,\" since it won't always be new, and I find \"entry points\" a bit awkward. (Also, is opening the app from the Start menu -- or from the CLI -- an \"entry point\"? Arguably, yes, and configuring this policy setting should prevent that, too)",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594196043/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 224,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594213703",
+    "pull_request_review_id": 5931176755,
+    "id": 4594213703,
+    "node_id": "PRRC_kwDODihR8s8AAAABEdYjRw",
+    "diff_hunk": "@@ -135,6 +135,9 @@ const (\n \tLogSCMInteractions      Key = \"LogSCMInteractions\"\n \tFlushDNSOnSessionUnlock Key = \"FlushDNSOnSessionUnlock\"\n \n+\t// HideWindowedUI controls whether entry points to the Windwos windowed UI are hidden in favor",
+    "path": "util/syspolicy/pkey/pkey.go",
+    "commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "original_commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nit: document the policy setting's type (it's a boolean)\n\n(The underlying representation can vary across platforms and policy sources, so while it's a 1/0 REG_DWORD on Windows, that's an implementation detail)",
+    "created_at": "2026-11-17T01:46:56Z",
+    "updated_at": "2026-11-17T01:48:45Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594213703",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594213703"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594213703"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">nit: document the policy setting's type (it's a boolean)</p>\n<p dir=\"auto\">(The underlying representation can vary across platforms and policy sources, so while it's a 1/0 REG_DWORD on Windows, that's an implementation detail)</p>",
+    "body_text": "nit: document the policy setting's type (it's a boolean)\n(The underlying representation can vary across platforms and policy sources, so while it's a 1/0 REG_DWORD on Windows, that's an implementation detail)",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594213703/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 138,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594227644",
+    "pull_request_review_id": 5931176755,
+    "id": 4594227644,
+    "node_id": "PRRC_kwDODihR8s8AAAABEdZZvA",
+    "diff_hunk": "@@ -37,6 +37,7 @@ var implicitDefinitions = []*setting.Definition{\n \tsetting.NewDefinition(pkey.FlushDNSOnSessionUnlock, setting.DeviceSetting, setting.BooleanValue),\n \tsetting.NewDefinition(pkey.EncryptState, setting.DeviceSetting, setting.BooleanValue),\n \tsetting.NewDefinition(pkey.Hostname, setting.DeviceSetting, setting.StringValue),\n+\tsetting.NewDefinition(pkey.HideWindowedUI, setting.DeviceSetting, setting.BooleanValue),",
+    "path": "util/syspolicy/policy_keys.go",
+    "commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "original_commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think we can safely make it a `setting.UserSetting`, allowing it to be configured on a per-user (or per-user group) basis rather than per device (or per-device group).",
+    "created_at": "2026-11-17T01:48:40Z",
+    "updated_at": "2026-11-17T01:48:45Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594227644",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594227644"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4594227644"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">I think we can safely make it a <code class=\"notranslate\">setting.UserSetting</code>, allowing it to be configured on a per-user (or per-user group) basis rather than per device (or per-device group).</p>",
+    "body_text": "I think we can safely make it a setting.UserSetting, allowing it to be configured on a per-user (or per-user group) basis rather than per device (or per-device group).",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4594227644/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617440613",
+    "pull_request_review_id": 5960888065,
+    "id": 4617440613,
+    "node_id": "PRRC_kwDODihR8s8AAAABEziNZQ",
+    "diff_hunk": "@@ -37,6 +37,7 @@ var implicitDefinitions = []*setting.Definition{\n \tsetting.NewDefinition(pkey.FlushDNSOnSessionUnlock, setting.DeviceSetting, setting.BooleanValue),\n \tsetting.NewDefinition(pkey.EncryptState, setting.DeviceSetting, setting.BooleanValue),\n \tsetting.NewDefinition(pkey.Hostname, setting.DeviceSetting, setting.StringValue),\n+\tsetting.NewDefinition(pkey.HideWindowedUI, setting.UserSetting, setting.BooleanValue),",
+    "path": "util/syspolicy/policy_keys.go",
+    "commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "original_commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nit: would you mind moving the new policy definition to the block below where other UserSettings are defined?",
+    "created_at": "2026-11-18T16:34:36Z",
+    "updated_at": "2026-11-18T16:59:16Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617440613",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617440613"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617440613"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">nit: would you mind moving the new policy definition to the block below where other UserSettings are defined?</p>",
+    "body_text": "nit: would you mind moving the new policy definition to the block below where other UserSettings are defined?",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617440613/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617652465",
+    "pull_request_review_id": 5960888065,
+    "id": 4617652465,
+    "node_id": "PRRC_kwDODihR8s8AAAABEzvI8Q",
+    "diff_hunk": "@@ -350,6 +350,16 @@\n           <falseValue><decimal value=\"0\" /></falseValue>\n         </boolean>\n       </elements>\n+    </policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$)string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">",
+    "path": "docs/windows/policy/tailscale.admx",
+    "commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "original_commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n    </policy>\n    <policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n```\n\nThis should be a closing `</policy>` tag, followed by an opening `<policy` tag for the new policy.\nAlso, s/`$)string.HideWindowedUI)`/`$(string.HideWindowedUI)`/ in the `displayName`.",
+    "created_at": "2026-11-18T16:50:16Z",
+    "updated_at": "2026-11-18T16:59:16Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617652465",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617652465"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617652465"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">    &lt;/<span class=\"pl-ent\">policy</span><span class=\"x x-first\"> </span><span class=\"pl-e x\">name</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">HideWindowedUI</span><span class=\"pl-pds x\">\"</span></span><span class=\"x\"> </span><span class=\"pl-e x\">class</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">Both</span><span class=\"pl-pds x\">\"</span></span><span class=\"x\"> </span><span class=\"pl-e x\">displayName</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">$)string.HideWindowedUI)</span><span class=\"pl-pds x\">\"</span></span><span class=\"x\"> </span><span class=\"pl-e x\">explainText</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">$(string.HideWindowedUI_Help)</span><span class=\"pl-pds x\">\"</span></span><span class=\"x\"> </span><span class=\"pl-e x\">key</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">Software\\Policies\\Tailscale</span><span class=\"pl-pds x\">\"</span></span><span class=\"x\"> </span><span class=\"pl-e x\">valueName</span><span class=\"x\">=</span><span class=\"pl-s\"><span class=\"pl-pds x\">\"</span><span class=\"x\">HideWindowedUI</span><span class=\"pl-pds x x-last\">\"</span></span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">    &lt;/<span class=\"pl-ent\">policy</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">    &lt;<span class=\"pl-ent\">policy</span> <span class=\"pl-e\">name</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">class</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Both<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">displayName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">explainText</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI_Help)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">key</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Software\\Policies\\Tailscale<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">valueName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n\n<p dir=\"auto\">This should be a closing <code class=\"notranslate\">&lt;/policy&gt;</code> tag, followed by an opening <code class=\"notranslate\">&lt;policy</code> tag for the new policy.<br>\nAlso, s/<code class=\"notranslate\">$)string.HideWindowedUI)</code>/<code class=\"notranslate\">$(string.HideWindowedUI)</code>/ in the <code class=\"notranslate\">displayName</code>.</p>",
+    "body_text": "Suggested change\n      \n    \n    \n      \n          \n            \n                </policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$)string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n          \n          \n            \n                </policy>\n          \n          \n            \n                <policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n          \n      \n    \n    \n  \n\nThis should be a closing </policy> tag, followed by an opening <policy tag for the new policy.\nAlso, s/$)string.HideWindowedUI)/$(string.HideWindowedUI)/ in the displayName.",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617652465/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 353,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617666941",
+    "pull_request_review_id": 5960888065,
+    "id": 4617666941,
+    "node_id": "PRRC_kwDODihR8s8AAAABEzwBfQ",
+    "diff_hunk": "@@ -350,6 +350,16 @@\n           <falseValue><decimal value=\"0\" /></falseValue>\n         </boolean>\n       </elements>\n+    </policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$)string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n+      <parentCategory ref=\"UI_Category\" />\n+      <supportedOn ref=\"SINCE_V1_106\" />\n+      <enabledValue>\n+        <decimal value=\"1\" />\n+      </enabledValue>\n+      <disabledValue>\n+        <decimal value=\"0\" />\n+      </disabledValue>\n+    <policy>\n     </policy>\n     <policy name=\"TestMenu\" class=\"Both\" displayName=\"$(string.TestMenu)\" explainText=\"$(string.TestMenu_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"TestMenu\">",
+    "path": "docs/windows/policy/tailscale.admx",
+    "commit_id": "48a54e66a909d9d7d228b6ac0368169278e325d5",
+    "original_commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n      </disabledValue>\n</policy>\n<policy name=\"TestMenu\" class=\"Both\" displayName=\"$(string.TestMenu)\" explainText=\"$(string.TestMenu_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"TestMenu\">\n```\n(spurious `<policy>` on line 362)",
+    "created_at": "2026-11-18T16:51:17Z",
+    "updated_at": "2026-11-18T16:59:16Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617666941",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617666941"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617666941"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default\" data-line-number=\"361\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">      &lt;/<span class=\"pl-ent\">disabledValue</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default\" data-line-number=\"362\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">    &lt;<span class=\"pl-ent\">policy</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default\" data-line-number=\"363\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">    &lt;/<span class=\"pl-ent\">policy</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default\" data-line-number=\"364\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">    &lt;<span class=\"pl-ent\">policy</span> <span class=\"pl-e\">name</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>TestMenu<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">class</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Both<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">displayName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.TestMenu)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">explainText</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.TestMenu_Help)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">key</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Software\\Policies\\Tailscale<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">valueName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>TestMenu<span class=\"pl-pds\">\"</span></span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default\" data-line-number=\"361\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">      &lt;/<span class=\"pl-ent\">disabledValue</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default\" data-line-number=\"362\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">&lt;/<span class=\"pl-ent\">policy</span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default\" data-line-number=\"363\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">&lt;<span class=\"pl-ent\">policy</span> <span class=\"pl-e\">name</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>TestMenu<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">class</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Both<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">displayName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.TestMenu)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">explainText</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.TestMenu_Help)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">key</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Software\\Policies\\Tailscale<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">valueName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>TestMenu<span class=\"pl-pds\">\"</span></span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n\n<p dir=\"auto\">(spurious <code class=\"notranslate\">&lt;policy&gt;</code> on line 362)</p>",
+    "body_text": "Suggested change\n      \n    \n    \n      \n          \n            \n                  </disabledValue>\n          \n          \n            \n                <policy>\n          \n          \n            \n                </policy>\n          \n          \n            \n                <policy name=\"TestMenu\" class=\"Both\" displayName=\"$(string.TestMenu)\" explainText=\"$(string.TestMenu_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"TestMenu\">\n          \n          \n            \n                  </disabledValue>\n          \n          \n            \n            </policy>\n          \n          \n            \n            <policy name=\"TestMenu\" class=\"Both\" displayName=\"$(string.TestMenu)\" explainText=\"$(string.TestMenu_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"TestMenu\">\n          \n      \n    \n    \n  \n\n(spurious <policy> on line 362)",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617666941/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 362,
+    "original_start_line": 361,
+    "start_side": "RIGHT",
+    "line": 364,
+    "original_line": 364,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 14,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617700623",
+    "pull_request_review_id": 5960888065,
+    "id": 4617700623,
+    "node_id": "PRRC_kwDODihR8s8AAAABEzyFDw",
+    "diff_hunk": "@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d\n If you disable or do not configure this policy setting, all devices will be displayed.\n \n Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>\n+\n+<string id=\"HideWindowedUI\">Hide the windowed user interface</string>\n+            <string id=\"HideWindowedUI_Help\"><![CDATA[This policy controls whether the client's windowed interface is available.\n+\n+If you enable this policy, the \"Open Tailscale\" menu item and device navigation actions are hidden, and the legacy tray-based Preferences submenu is used instead of opening the windowed Settings page.\n+\n+If you disable or do not configure this policy, the windowed user interface is available when supported.\n+\n+If the windowed user interface is already open when the policy is enabled, it remains open.\n+]]<>/string>",
+    "path": "docs/windows/policy/en-US/tailscale.adml",
+    "commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "original_commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n]]></string>\n```",
+    "created_at": "2026-11-18T16:53:44Z",
+    "updated_at": "2026-11-18T16:59:16Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617700623",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617700623"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617700623"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">]]<span class=\"x x-first x-last\">&lt;&gt;</span>/string&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">]]<span class=\"x x-first x-last\">&gt;&lt;</span>/<span class=\"pl-ent\">string</span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n",
+    "body_text": "Suggested change\n      \n    \n    \n      \n          \n            \n            ]]<>/string>\n          \n          \n            \n            ]]></string>",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617700623/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 231,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617703251",
+    "pull_request_review_id": 5960888065,
+    "id": 4617703251,
+    "node_id": "PRRC_kwDODihR8s8AAAABEzyPUw",
+    "diff_hunk": "@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d\n If you disable or do not configure this policy setting, all devices will be displayed.\n \n Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>\n+\n+<string id=\"HideWindowedUI\">Hide the windowed user interface</string>",
+    "path": "docs/windows/policy/en-US/tailscale.adml",
+    "commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "original_commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nit: indentation on line 223.",
+    "created_at": "2026-11-18T16:53:54Z",
+    "updated_at": "2026-11-18T16:59:16Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617703251",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617703251"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4617703251"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">nit: indentation on line 223.</p>",
+    "body_text": "nit: indentation on line 223.",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4617703251/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 223,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  },
+  {
+    "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4621405040",
+    "pull_request_review_id": 5965817501,
+    "id": 4621405040,
+    "node_id": "PRRC_kwDODihR8s8AAAABE3ULcA",
+    "diff_hunk": "@@ -351,6 +351,16 @@\n         </boolean>\n       </elements>\n     </policy>\n+    </policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">",
+    "path": "docs/windows/policy/tailscale.admx",
+    "commit_id": "69175fdb783a00e335af7d167ebdaa94c4486f96",
+    "original_commit_id": "69175fdb783a00e335af7d167ebdaa94c4486f96",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n    <policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n```",
+    "created_at": "2026-11-18T21:56:38Z",
+    "updated_at": "2026-11-18T21:57:46Z",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4621405040",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4621405040"
+      },
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#discussion_r4621405040"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "  <div class=\"my-2 border rounded-2 js-suggested-changes-blob diff-view js-check-hidden-unicode\" id=\"\">\n    <div class=\"f6 p-2 lh-condensed border-bottom d-flex\">\n      <div class=\"flex-auto flex-items-center color-fg-muted\">\n        Suggested change\n      </div>\n    </div>\n    <div itemprop=\"text\" class=\"blob-wrapper data file rounded-0\" style=\"margin: 0; border: none; overflow-y: visible; overflow-x: auto;\">\n      <table class=\"d-table tab-size mb-0 width-full\" data-paste-markdown-skip=\"\">\n          <tbody><tr class=\"border-0\">\n            <td class=\"blob-num blob-num-deletion text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-deletion js-blob-code-deletion blob-code-marker-deletion\">    &lt;<span class=\"x x-first x-last\">/</span><span class=\"pl-ent\">policy</span> <span class=\"pl-e\">name</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">class</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Both<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">displayName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">explainText</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI_Help)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">key</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Software\\Policies\\Tailscale<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">valueName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;</td>\n          </tr>\n          <tr class=\"border-0\">\n            <td class=\"blob-num blob-num-addition text-right border-0 px-2 py-1 lh-default blob-num-hidden\" data-line-number=\"·\"></td>\n            <td class=\"border-0 px-2 py-1 blob-code-inner blob-code-addition js-blob-code-addition blob-code-marker-addition\">    &lt;<span class=\"pl-ent\">policy</span> <span class=\"pl-e\">name</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">class</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Both<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">displayName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">explainText</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>$(string.HideWindowedUI_Help)<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">key</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>Software\\Policies\\Tailscale<span class=\"pl-pds\">\"</span></span> <span class=\"pl-e\">valueName</span>=<span class=\"pl-s\"><span class=\"pl-pds\">\"</span>HideWindowedUI<span class=\"pl-pds\">\"</span></span>&gt;</td>\n          </tr>\n      </tbody></table>\n    </div>\n    <div class=\"js-apply-changes\"></div>\n  </div>\n",
+    "body_text": "Suggested change\n      \n    \n    \n      \n          \n            \n                </policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">\n          \n          \n            \n                <policy name=\"HideWindowedUI\" class=\"Both\" displayName=\"$(string.HideWindowedUI)\" explainText=\"$(string.HideWindowedUI_Help)\" key=\"Software\\Policies\\Tailscale\" valueName=\"HideWindowedUI\">",
+    "reactions": {
+      "url": "https://api.github.com/repos/tailscale/tailscale/pulls/comments/4621405040/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 354,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line",
+    "is_copilot_code_review": false,
+    "copilot_code_review_sources": [
+
+    ]
+  }
+]

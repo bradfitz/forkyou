@@ -1,0 +1,248 @@
+{{define "baseselect"}}
+<form class="baseselect" method="get" action="{{if eq .Page "rangediff"}}{{.PRURL}}/rangediff{{else if eq .Page "diff"}}{{.PRURL}}/diff{{else}}{{.PRURL}}{{end}}">
+  <label>Base
+    <select name="base" onchange="this.form.submit()">
+      <option value="parent" {{if eq .BaseN 0}}selected{{end}}>Parent ({{.Target.ShortBase}})</option>
+      {{range .PR.Snapshots}}{{if and (lt .N $.TargetN) (not .Missing)}}
+      <option value="{{.N}}" {{if eq $.BaseN .N}}selected{{end}}>Snapshot {{.N}} ({{.ShortRev}})</option>
+      {{end}}{{end}}
+    </select>
+  </label>
+  <span class="arrow">→</span>
+  <label>
+    <select name="s" onchange="this.form.submit()">
+      {{range .PR.Snapshots}}{{if not .Missing}}
+      <option value="{{.N}}" {{if eq $.TargetN .N}}selected{{end}}>Snapshot {{.N}} ({{.ShortRev}}){{if eq .N $.LatestN}} latest{{end}}</option>
+      {{end}}{{end}}
+    </select>
+  </label>
+  {{if .FileParam}}<input type="hidden" name="f" value="{{.FileParam}}">{{end}}
+  {{if .Base}}
+    {{if .Rebased}}<span class="chip rebasedchip" title="the two snapshots sit on different bases; changes from the base branch are muted">rebased: {{.Base.ShortBase}} → {{.Target.ShortBase}}</span>{{end}}
+    {{if ne .Page "rangediff"}}<a href="{{.RangeDiffURL}}" title="git range-diff of the two snapshots (v r)">range-diff</a>{{else}}<a href="{{.FilesURL}}">file diffs</a>{{end}}
+  {{end}}
+  {{if .AutoBase}}
+  <span class="autobase" title="Snapshot {{.BaseN}} is the most recent one you marked reviewed">showing changes since you last reviewed</span>
+  {{end}}
+</form>
+{{end}}
+
+{{define "rows"}}
+{{$p := .}}
+{{range .Rows}}
+  {{if eq .Class "skip"}}
+  <tr class="skiprow">
+    <td class="skipcell" colspan="{{$p.Cols}}">
+      <button class="expand" data-get="{{.ExpandURL}}" data-target="closest tr" data-swap="outerHTML">
+        Expand {{.Count}} unchanged line{{if ne .Count 1}}s{{end}}
+      </button>
+    </td>
+  </tr>
+  {{else}}
+  <tr class="diffrow {{.RowClass}}" data-l="{{.L.Num}}" data-r="{{.R.Num}}">
+    {{if not $p.Unified}}
+    <td class="num {{.LeftClass}}">{{if .L.Num}}<button class="linenum" data-side="left" data-line="{{.L.Num}}">{{.L.Num}}</button>{{end}}</td>
+    <td class="code {{.LeftClass}}"><div class="text">{{.LeftHTML}}</div></td>
+    {{end}}
+    <td class="num {{if $p.Unified}}{{.LeftClass}}{{.RightClass}}{{else}}{{.RightClass}}{{end}}">
+      {{if $p.Unified}}
+        {{if .L.Num}}<button class="linenum" data-side="left" data-line="{{.L.Num}}">{{.L.Num}}</button>
+        {{else if .R.Num}}<button class="linenum" data-side="right" data-line="{{.R.Num}}">{{.R.Num}}</button>{{end}}
+      {{else}}
+        {{if .R.Num}}<button class="linenum" data-side="right" data-line="{{.R.Num}}">{{.R.Num}}</button>{{end}}
+      {{end}}
+    </td>
+    <td class="code {{if $p.Unified}}{{.LeftClass}}{{.RightClass}}{{else}}{{.RightClass}}{{end}}">
+      <div class="text">{{if $p.Unified}}{{if .L.Num}}{{.LeftHTML}}{{else}}{{.RightHTML}}{{end}}{{else}}{{.RightHTML}}{{end}}</div>
+    </td>
+  </tr>
+  {{if or .LeftThreads .RightThreads}}
+  <tr class="threadrow">
+    {{if not $p.Unified}}
+    <td class="threadcell" colspan="2">{{range .LeftThreads}}{{template "thread" ($p.TF .)}}{{end}}</td>
+    {{end}}
+    <td class="threadcell" colspan="2">
+      {{if $p.Unified}}{{range .LeftThreads}}{{template "thread" ($p.TF .)}}{{end}}{{end}}
+      {{range .RightThreads}}{{template "thread" ($p.TF .)}}{{end}}
+    </td>
+  </tr>
+  {{end}}
+  {{end}}
+{{end}}
+{{end}}
+
+{{define "inline"}}
+<table class="diff inlinediff{{if .Unified}} unified{{end}}" style="tab-size:{{.TabSize}}" data-form="{{.X "form"}}" data-query="{{.Query "f" .FileParam}}">
+  <colgroup>{{if not .Unified}}<col class="numcol"><col class="codecol">{{end}}<col class="numcol"><col class="codecol"></colgroup>
+  <tbody>{{if .Binary}}<tr><td colspan="4" class="empty">Binary file.</td></tr>{{else}}{{template "rows" .}}{{end}}</tbody>
+</table>
+{{end}}
+
+{{define "commentstabs"}}
+<div class="tabs">
+  <input type="radio" name="commentstab" id="tab-unresolved" class="tabradio" checked>
+  <input type="radio" name="commentstab" id="tab-resolved" class="tabradio">
+  <div class="tablabels">
+    <label for="tab-unresolved" class="tablabel">{{len .Unresolved}} unresolved</label>
+    <label for="tab-resolved" class="tablabel">{{len .Resolved}} resolved</label>
+  </div>
+  <div class="tabpanel" data-tab="unresolved">
+    {{range .Unresolved}}{{template "thread" .}}{{else}}<p class="empty">🎉 No unresolved comments!</p>{{end}}
+  </div>
+  <div class="tabpanel" data-tab="resolved">
+    {{range .Resolved}}{{template "thread" .}}{{else}}<p class="empty">No resolved comments.</p>{{end}}
+  </div>
+</div>
+{{end}}
+
+{{define "thread"}}
+{{$x := print .P.PRURL "/x/"}}{{$l := ""}}{{if .Link}}{{$l = "&link=1"}}{{end}}
+<div class="thread{{if .Resolved}} resolved{{end}}{{if .Other}} other{{end}}{{if .Stale}} stale{{end}}{{if .IsDraft}} draftthread{{end}}"
+     id="thread-{{.ID}}" data-thread="{{.ID}}">
+  <div class="threadhead">
+    {{if .Other}}<span class="chip snap" title="written against an earlier snapshot">snapshot {{.SnapshotN}}</span>{{end}}
+    {{if .Stale}}<span class="chip stalechip" title="the line this was attached to is gone">stale</span>{{end}}
+    {{if .Outdated}}<span class="chip" title="GitHub calls this thread outdated">outdated</span>{{end}}
+    {{if .Resolved}}<span class="chip done">resolved</span>{{end}}
+    {{if and .StartLine (not .Link)}}<span class="chip" title="a comment on a range of lines">lines {{.StartLine}}-{{.Line}}</span>{{end}}
+    {{if and (eq .Line 0) (not .Link)}}<span class="chip">file comment</span>{{end}}
+    <span class="where">
+      {{if .Link}}<a href="{{.Link}}">{{.Where}}</a>{{if .SnapshotN}} · snapshot {{.SnapshotN}}{{end}}{{end}}
+      {{if .URL}} <a href="{{.URL}}" title="on GitHub">↗</a>{{end}}
+    </span>
+  </div>
+  <div class="comments">
+    {{range .Comments}}
+    <div class="comment{{if .Draft}} draft{{end}}" id="comment-{{.ID}}">
+      <div class="chead">
+        {{if .Avatar}}<img class="avatar" src="{{.Avatar}}&s=40" alt="" width="16" height="16">{{end}}
+        <span class="author">{{.Author}}</span>
+        {{if .Draft}}<span class="chip draftchip">draft</span>{{end}}
+        <span class="when" title="{{date .Created}}">{{since .Created}}</span>
+        {{if .Draft}}
+        <span class="draftactions">
+          <button class="linkish small" data-get="{{$x}}editform?comment={{.ID}}{{$l}}" data-target="#comment-{{.ID}}" data-swap="outerHTML">Edit</button>
+          <button class="linkish small danger" data-post="{{$x}}delete?comment={{.ID}}{{$l}}" data-target="closest .thread" data-swap="outerHTML">Delete</button>
+        </span>
+        {{end}}
+      </div>
+      {{if .BodyHTML}}<div class="body markdown">{{.BodyHTML}}</div>{{else}}<div class="body plain">{{.Body}}</div>{{end}}
+    </div>
+    {{end}}
+    {{if and .Reply .Reply.Resolve}}<div class="willresolve">will be resolved when published</div>{{end}}
+  </div>
+  <div class="threadactions">
+    {{if not .IsDraft}}{{if not .Reply}}
+    <button class="reply" data-get="{{$x}}replyform?thread={{.ID}}{{$l}}" data-target="closest .thread" data-swap="beforeend">Reply</button>
+    {{if not .Resolved}}<button class="reply" data-post="{{$x}}comment?thread={{.ID}}&body=Done&resolve=1{{$l}}" data-target="closest .thread" data-swap="outerHTML" title="Reply &quot;Done&quot; and resolve, when published">Done</button>{{end}}
+    {{end}}{{end}}
+    {{if .CanResolve}}
+    <button class="resolve" data-post="{{$x}}resolve?thread={{.ID}}{{$l}}" data-target="closest .thread" data-swap="outerHTML"
+      title="{{if .IsDraft}}publish this thread already resolved{{else}}changes on GitHub immediately{{end}}">
+      {{if .Resolved}}Unresolve{{else}}Resolve{{end}}
+    </button>
+    {{end}}
+  </div>
+</div>
+{{end}}
+
+{{define "editform"}}
+<form class="commentform editform" data-post="{{.P.X "edit"}}?comment={{.ID}}{{if .Link}}&link=1{{end}}" data-target="closest .thread" data-swap="outerHTML">
+  <textarea name="body" rows="4" autofocus>{{.Body}}</textarea>
+  <div class="formactions">
+    <button type="submit" class="primary">Save</button>
+    <button type="button" data-get="{{.P.X "thread"}}?thread={{.Thread}}{{if .Link}}&link=1{{end}}" data-target="closest .thread" data-swap="outerHTML">Cancel</button>
+  </div>
+</form>
+{{end}}
+
+{{define "replyform"}}
+<form class="replyform" data-post="{{.P.X "comment"}}?thread={{.T.ID}}{{if .Link}}&link=1{{end}}" data-target="closest .thread" data-swap="outerHTML">
+  <textarea name="body" rows="4" placeholder="Reply… (markdown; Ctrl/⌘-Enter saves)" autofocus></textarea>
+  <div class="formactions">
+    <button type="submit" class="primary">Save draft</button>
+    <label class="resolvebox"><input type="checkbox" name="resolve" value="1" {{if not .T.Resolved}}checked{{end}}> Resolve</label>
+    <button type="button" data-remove="closest form">Cancel</button>
+  </div>
+</form>
+{{end}}
+
+{{define "commentrow"}}
+<tr class="threadrow formrow">
+  {{if not .P.Unified}}
+  <td class="threadcell" colspan="2">{{if eq .Side "left"}}{{template "newform" .}}{{end}}</td>
+  <td class="threadcell" colspan="2">{{if eq .Side "right"}}{{template "newform" .}}{{end}}</td>
+  {{else}}
+  <td class="threadcell" colspan="2">{{template "newform" .}}</td>
+  {{end}}
+</tr>
+{{end}}
+
+{{define "newform"}}
+<form class="commentform" data-post="{{.P.X "comment"}}" data-target="{{if .Line}}closest tr{{else}}this{{end}}" data-swap="outerHTML">
+  {{if .P.BaseParam}}<input type="hidden" name="base" value="{{.P.BaseParam}}">{{end}}
+  {{if .P.TargetParam}}<input type="hidden" name="s" value="{{.P.TargetParam}}">{{end}}
+  <input type="hidden" name="f" value="{{.P.FileParam}}">
+  <input type="hidden" name="side" value="{{.Side}}">
+  <input type="hidden" name="line" value="{{.Line}}">
+  <input type="hidden" name="start" value="{{.Start}}">
+  <input type="hidden" name="unified" value="{{if .P.Unified}}1{{else}}0{{end}}">
+  <div class="formwhere">Comment on {{.Lines}}{{if not .Line}} of {{.P.FileParam}}{{end}}</div>
+  <textarea name="body" rows="4" placeholder="Comment… (markdown; Ctrl/⌘-Enter saves; shift-click a line number to comment on a range)" autofocus></textarea>
+  <div class="formactions">
+    <button type="submit" class="primary">Save draft</button>
+    <label class="resolvebox"><input type="checkbox" name="resolve" value="1"> Resolved</label>
+    <button type="button" data-remove="{{if .Line}}closest tr{{else}}closest form{{end}}">Cancel</button>
+  </div>
+</form>
+{{end}}
+
+{{define "threadrow"}}
+<tr class="threadrow">
+  {{if not .P.Unified}}
+  <td class="threadcell" colspan="2">{{if eq .Side "left"}}{{template "thread" .T}}{{end}}</td>
+  <td class="threadcell" colspan="2">{{if eq .Side "right"}}{{template "thread" .T}}{{end}}</td>
+  {{else}}
+  <td class="threadcell" colspan="2">{{template "thread" .T}}</td>
+  {{end}}
+</tr>
+{{end}}
+
+{{define "reviewedbutton"}}
+<button class="reviewed{{if .Reviewed}} on{{else if .RebaseOnly}} rebase{{end}}"
+        {{if and .RebaseOnly (not .Reviewed)}}title="this pull request does not touch this file: everything in it came from the base branch"{{end}}
+        data-post="{{.URL}}" data-target="this" data-swap="outerHTML">
+  {{if .Reviewed}}✓ reviewed{{else if .RebaseOnly}}rebase only{{else}}mark reviewed{{end}}
+</button>
+{{end}}
+
+{{define "snapreviewedbutton"}}
+<button class="reviewed{{if .Reviewed}} on{{end}}" data-post="{{.URL}}" data-target="this" data-swap="outerHTML"
+        title="marks every file in this snapshot; later diffs default to showing changes since this one">
+  {{if .Reviewed}}✓ reviewed{{else}}mark reviewed{{end}}
+</button>
+{{end}}
+
+{{define "replybox"}}
+<dialog id="replydialog" class="replydialog">
+<form class="replybox" method="post" action="{{.PRURL}}/publish">
+  <h2>Reply to #{{.Key.Number}}</h2>
+  {{if not .CanPublish}}<p class="note">Not logged in to GitHub: publishing needs a token (gh auth login, or $GITHUB_TOKEN).</p>{{end}}
+  <textarea name="message" id="replymessage" rows="6" data-save="{{.X "message"}}" placeholder="Review summary (markdown, optional)">{{.Drafts.Message}}</textarea>
+  <input type="hidden" name="return" value="{{.SelfURL}}">
+  <div class="replydrafts">
+    {{if .DraftCount}}Publishing {{plural .DraftCount "draft comment"}} against snapshot {{.LatestN}} ({{short .PR.Pull.Head.SHA}}).
+    Drafts written against older snapshots, or on lines outside GitHub's diff, are carried over or quoted.
+    {{else}}No draft comments.{{end}}
+  </div>
+  <div class="formactions">
+    <button type="submit" name="event" value="COMMENT" class="primary" data-busy="Publishing…">Publish{{if .DraftCount}} {{plural .DraftCount "draft"}}{{end}}</button>
+    {{if ne .Viewer .PR.Pull.User.Login}}
+    <button type="submit" name="event" value="APPROVE" class="approve" data-busy="Publishing…">Approve</button>
+    <button type="submit" name="event" value="REQUEST_CHANGES" class="danger" data-busy="Publishing…">Request changes</button>
+    {{end}}
+    <button type="button" onclick="this.closest('dialog').close()">Cancel</button>
+  </div>
+</form>
+</dialog>
+{{end}}

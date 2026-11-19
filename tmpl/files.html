@@ -1,0 +1,137 @@
+{{template "head" .}}
+<main class="files">
+  <div id="viewinfo" hidden data-pr="{{.PRURL}}" data-base="{{.BaseN}}" data-target="{{.TargetN}}" data-latest="{{.LatestN}}" data-file=""></div>
+  {{if .Flash}}<p class="note flash">{{.Flash}}</p>{{end}}
+  <div class="pagehead">
+    <div>
+      <h1>{{.PR.Pull.Title}} <span class="prnum">#{{.Key.Number}}</span></h1>
+      <div class="byline">
+        <span class="chip state-{{.PR.Pull.State}}{{if .PR.Pull.Merged}} state-merged{{end}}">{{if .PR.Pull.Merged}}merged{{else if .PR.Pull.Draft}}draft{{else}}{{.PR.Pull.State}}{{end}}</span>
+        <b>{{.PR.Pull.User.Login}}</b> wants to merge <code>{{.PR.Pull.Head.Label}}</code> into <code>{{.PR.Pull.Base.Ref}}</code>
+        · opened {{since .PR.Pull.CreatedAt}}
+        · <a href="{{.PR.Pull.HTMLURL}}">GitHub</a>
+      </div>
+      {{if or .Approvals .ChangesReq}}
+      <div class="votes">
+        {{range .Approvals}}<span class="chip lgtmchip" title="approved">✓ {{.}}</span> {{end}}
+        {{range .ChangesReq}}<span class="chip unresolved" title="requested changes">✗ {{.}}</span> {{end}}
+      </div>
+      {{end}}
+    </div>
+    <div class="pageactions">
+      <a class="button" href="{{.PRURL}}{{.Query "refresh" "1"}}" title="Reload from GitHub (R)">Refresh</a>
+      <button class="primary" id="replybutton" title="Reply and publish drafts (a)">Reply{{if .DraftCount}} ({{plural .DraftCount "draft"}}){{end}}</button>
+    </div>
+  </div>
+
+  {{if .PR.Pull.BodyHTML}}
+  <details class="commitmsg prbody" {{if lt (len .PR.Pull.Body) 1200}}open{{end}}>
+    <summary>Description</summary>
+    <div class="markdown">{{.PR.Pull.BodyHTML | html_safe}}</div>
+  </details>
+  {{end}}
+
+  <section class="snapshots">
+    <h2>Snapshots <span class="hint">every push is a snapshot; compare any two</span></h2>
+    <table class="snaptable">
+      <tbody>
+      {{range .Snaps}}
+      <tr class="{{if .Sel}}sel{{end}}{{if .IsBase}} isbase{{end}}{{if .Missing}} missing{{end}}">
+        <td class="sn">{{if .Missing}}{{.N}}{{else}}<a href="{{$.SnapURL .N}}" title="Show snapshot {{.N}} against its base">{{.N}}</a>{{end}}</td>
+        <td><code title="{{.Head}}">{{.ShortRev}}</code></td>
+        <td class="when" title="{{date .Pushed}}">{{since .Pushed}}{{if .Pusher}} by {{.Pusher}}{{end}}</td>
+        <td class="chips">
+          {{if .Force}}<span class="chip snap" title="arrived by force push">force push</span>{{end}}
+          {{if .Rebased}}<span class="chip rebasedchip" title="sits on a different base than the snapshot before: {{.Base}}">rebased onto {{.ShortBase}}</span>{{end}}
+          {{if .Missing}}<span class="chip stalechip" title="GitHub no longer has this commit">unavailable</span>{{end}}
+          {{range .Reviews}}<span class="chip review-{{stateClass .State}}" title="{{.User.Login}} {{stateText .State}} on this snapshot">{{.User.Login}}{{if eq .State "APPROVED"}} ✓{{else if eq .State "CHANGES_REQUESTED"}} ✗{{end}}</span>{{end}}
+        </td>
+        <td class="subject">{{if gt .Commits 1}}<span class="chip">{{.Commits}} commits</span> {{end}}{{.Subject}}</td>
+        <td class="compare">{{if and (gt .N 1) (not .Missing)}}<a href="{{$.CompareURL (sub .N 1) .N}}" title="What changed from snapshot {{sub .N 1}} to {{.N}}">Δ{{sub .N 1}}</a>{{end}}</td>
+        <td class="snapmarks">{{if not .Missing}}{{template "snapreviewedbutton" (snapArg $ .)}}{{end}}</td>
+      </tr>
+      {{end}}
+      </tbody>
+    </table>
+  </section>
+
+  {{template "baseselect" .}}
+
+  {{if gt (len .Commits) 1}}
+  <details class="commits">
+    <summary>{{len .Commits}} commits in snapshot {{.TargetN}}</summary>
+    <ol>
+      {{range .Commits}}<li><code>{{.ShortSHA}}</code> {{.Subject}} <span class="when">{{.Author}}</span></li>{{end}}
+    </ol>
+  </details>
+  {{end}}
+
+  <div class="filelisthead">
+    <button id="expandall" title="Show every diff inline (I)">Expand all</button>
+  </div>
+  <table class="filelist{{if .RebaseOnlyCount}} hiderebase{{end}}">
+    <tbody>
+      {{range .Files}}
+      <tr class="item filerow{{if .Hidden}} rebaseonly{{end}}" data-href="{{.URL}}" data-inline="{{.InlineURL}}"
+          data-file="{{.Path}}" data-comments="{{.Threads}}" data-filter="{{.Path}}">
+        <td class="status status-{{.Char}}" title="{{if not .Char}}no difference here; listed for its comments{{end}}">{{.Char}}</td>
+        <td class="name"><a href="{{.URL}}">{{.Name}}</a></td>
+        <td class="delta">{{if .Char}}{{if .Binary}}binary{{else}}<span class="plus">+{{.Added}}</span> <span class="minus">−{{.Deleted}}</span>{{end}}{{end}}</td>
+        <td class="counts">
+          {{if .DraftN}}<span class="chip draftchip">{{plural .DraftN "draft"}}</span>{{end}}
+          {{if .Resolved}}<span class="chip done">{{.Resolved}} resolved</span>{{end}}
+          {{if .Unresolved}}<span class="chip unresolved">{{.Unresolved}} unresolved</span>{{end}}
+        </td>
+        <td class="reviewedcell">{{template "reviewedbutton" (reviewedArg $.PP .Path .Reviewed .RebaseOnly)}}</td>
+      </tr>
+      {{else}}
+      <tr><td class="empty">No differences.</td></tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{if .RebaseOnlyCount}}
+  <div class="rebasefoot">
+    <button id="showrebase" data-count="{{.RebaseOnlyCount}}"
+            title="files this pull request does not touch: everything in them came from the base branch">
+      show {{.RebaseOnlyCount}} rebase-only file{{if ne .RebaseOnlyCount 1}}s{{end}}
+    </button>
+  </div>
+  {{end}}
+
+  {{if or .Resolved .Unresolved}}
+  <section class="history">
+    <h2>Comments</h2>
+    {{template "commentstabs" .}}
+  </section>
+  {{end}}
+
+  <section class="conversation">
+    <h2>Conversation</h2>
+    {{range .Conversation}}
+      {{if eq .Kind "push"}}
+      <div class="convpush">
+        <span class="chip snap">snapshot {{.Snapshot.N}}</span>
+        {{if .Author}}<b>{{.Author}}</b> {{if .Snapshot.Force}}force-pushed{{else}}pushed{{end}}{{else}}pushed{{end}}
+        <code>{{.Snapshot.ShortRev}}</code> {{.Snapshot.Subject}}
+        <span class="when" title="{{date .When}}">{{since .When}}</span>
+      </div>
+      {{else}}
+      <div class="convitem {{.Kind}} review-{{stateClass .State}}">
+        <div class="chead">
+          {{if .Avatar}}<img class="avatar" src="{{.Avatar}}&s=40" alt="" width="20" height="20">{{end}}
+          <span class="author">{{.Author}}</span>
+          {{if eq .Kind "review"}}<span class="chip review-{{stateClass .State}}">{{stateText .State}}</span>
+            {{if .Snapshot}}<span class="chip snap">on snapshot {{.Snapshot.N}}</span>{{end}}
+            {{if .Threads}}<span class="when">{{plural .Threads "inline comment"}}</span>{{end}}
+          {{end}}
+          <a class="when" href="{{.URL}}" title="{{date .When}}">{{since .When}}</a>
+        </div>
+        {{if .BodyHTML}}<div class="body markdown">{{.BodyHTML}}</div>{{end}}
+      </div>
+      {{end}}
+    {{end}}
+  </section>
+
+  {{template "replybox" .PP}}
+</main>
+{{template "foot" .}}

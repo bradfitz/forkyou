@@ -1,0 +1,134 @@
+[
+  {
+    "id": 5931176755,
+    "node_id": "PRR_kwDODihR8s8AAAABYYaTMw",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?u=f6d2798a23e43f74a3cb786215b2b927845ce2fc&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5931176755",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "author_association": "MEMBER",
+    "is_copilot_code_review": false,
+    "copilot_code_review_effort": null,
+    "_links": {
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5931176755"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "",
+    "body_text": "",
+    "submitted_at": "2026-11-17T01:48:44Z",
+    "commit_id": "d940f5ba68ba1bed617c826b65479c71158a4db5"
+  },
+  {
+    "id": 5960888065,
+    "node_id": "PRR_kwDODihR8s8AAAABY0vvAQ",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?u=f6d2798a23e43f74a3cb786215b2b927845ce2fc&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We may need to adjust the wording based on product feedback later today, but there are a few syntax errors and a couple of nits here.\n\nI've [borked it](https://github.com/tailscale/tailscale/pull/14919) before too, so I filed #22493 and will work on adding CI validation for these files.",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5960888065",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "author_association": "MEMBER",
+    "is_copilot_code_review": false,
+    "copilot_code_review_effort": null,
+    "_links": {
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5960888065"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">We may need to adjust the wording based on product feedback later today, but there are a few syntax errors and a couple of nits here.</p>\n<p dir=\"auto\">I've <a href=\"https://github.com/tailscale/tailscale/pull/14919\" data-hovercard-type=\"pull_request\" data-hovercard-url=\"/tailscale/tailscale/pull/14919/hovercard\">borked it</a> before too, so I filed <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"6472171724\" data-permission-text=\"Title is private\" data-url=\"https://github.com/tailscale/tailscale/issues/22493\" data-hovercard-type=\"issue\" data-hovercard-url=\"/tailscale/tailscale/issues/22493/hovercard\" href=\"https://github.com/tailscale/tailscale/issues/22493\">#22493</a> and will work on adding CI validation for these files.</p>",
+    "body_text": "We may need to adjust the wording based on product feedback later today, but there are a few syntax errors and a couple of nits here.\nI've borked it before too, so I filed #22493 and will work on adding CI validation for these files.",
+    "submitted_at": "2026-11-18T16:59:15Z",
+    "commit_id": "6fb12097c2caea8e339ef2e41d0c8467d265c372"
+  },
+  {
+    "id": 5965817501,
+    "node_id": "PRR_kwDODihR8s8AAAABY5cmnQ",
+    "user": {
+      "login": "nickkhyl",
+      "id": 1761190,
+      "node_id": "MDQ6VXNlcjE3NjExOTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1761190?u=f6d2798a23e43f74a3cb786215b2b927845ce2fc&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickkhyl",
+      "html_url": "https://github.com/nickkhyl",
+      "followers_url": "https://api.github.com/users/nickkhyl/followers",
+      "following_url": "https://api.github.com/users/nickkhyl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickkhyl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickkhyl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickkhyl/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickkhyl/orgs",
+      "repos_url": "https://api.github.com/users/nickkhyl/repos",
+      "events_url": "https://api.github.com/users/nickkhyl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickkhyl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "LGTM with the `policy` tag fixed.",
+    "state": "APPROVED",
+    "html_url": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5965817501",
+    "pull_request_url": "https://api.github.com/repos/tailscale/tailscale/pulls/22447",
+    "author_association": "MEMBER",
+    "is_copilot_code_review": false,
+    "copilot_code_review_effort": null,
+    "_links": {
+      "html": {
+        "href": "https://github.com/tailscale/tailscale/pull/22447#pullrequestreview-5965817501"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tailscale/tailscale/pulls/22447"
+      }
+    },
+    "body_html": "<p dir=\"auto\">LGTM with the <code class=\"notranslate\">policy</code> tag fixed.</p>",
+    "body_text": "LGTM with the policy tag fixed.",
+    "submitted_at": "2026-11-18T21:57:46Z",
+    "commit_id": "69175fdb783a00e335af7d167ebdaa94c4486f96"
+  }
+]

@@ -1,0 +1,10 @@
+{{template "head" .}}
+<main class="changes">
+  <div class="pagehead">
+    <h1>{{.Owner}}/{{.Repo}}</h1>
+    <div class="pageactions"><a href="https://github.com/{{.Owner}}/{{.Repo}}/pulls">on GitHub</a></div>
+  </div>
+  {{if not .Items}}<p class="empty">No open pull requests.</p>{{end}}
+  {{template "prlist" .Items}}
+</main>
+{{template "foot" .}}

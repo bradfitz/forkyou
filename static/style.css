@@ -1,0 +1,965 @@
+/* Copyright 2026 The Go Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file. */
+
+/* The diff colors are Gerrit's, copied exactly from
+ * polygerrit-ui/app/styles/themes/app-theme.ts, because they are chosen
+ * to stay legible for color-blind readers. Gerrit's rule: the light color
+ * fills the whole changed line, and the dark color marks the part of the
+ * line that actually changed. A chunk that only adds or only removes has
+ * no intraline information to show, so the dark color fills those lines. */
+
+:root {
+	/* diff colors */
+	--dark-add-highlight-color: #aaf2aa;
+	--light-add-highlight-color: #d8fed8;
+	--dark-remove-highlight-color: #ffcdd2;
+	--light-remove-highlight-color: #ffebee;
+	--dark-rebased-add-highlight-color: #d7d7f9;
+	--light-rebased-add-highlight-color: #eef;
+	--dark-rebased-remove-highlight-color: #f7e8b7;
+	--light-rebased-remove-highlight-color: #fff8dc;
+	--diff-context-control-background-color: #fff7d4;
+	--diff-context-control-border-color: #f6e6a5;
+	--diff-selection-background-color: #c7dbf9;
+	--diff-highlight-range-color: rgba(255, 220, 0, 0.5);
+	--diff-trailing-whitespace-indicator: #ff9ad2;
+	--token-highlighting-color: #fffd54;
+	--focused-line-outline-color: #1967d2;
+	--diff-blank-background-color: #f8f9fa;
+	--unresolved-comment-background-color: #fef7e0;
+
+	/* palette */
+	--gerrit-blue-light: #1565c0;
+	--blue-50: #e8f0fe;
+	--blue-700: #1967d2;
+	--gray-50: #f8f9fa;
+	--gray-100: #f1f3f4;
+	--gray-200: #e8eaed;
+	--gray-300: #dadce0;
+	--gray-500: #9aa0a6;
+	--gray-700: #5f6368;
+	--gray-800: #3c4043;
+	--gray-900: #202124;
+	--orange-50: #feefe3;
+	--orange-900: #b06000;
+	--green-50: #e6f4ea;
+	--green-700: #188038;
+	--green-800: #137333;
+	--red-50: #fce8e6;
+	--red-700: #c5221f;
+	--purple-50: #f3e8fd;
+	--purple-900: #681da8;
+
+	--font: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+	--mono: "Roboto Mono", "SF Mono", Menlo, Consolas, monospace;
+	--border: 1px solid var(--gray-300);
+}
+
+* { box-sizing: border-box; }
+
+body {
+	margin: 0;
+	font-family: var(--font);
+	font-size: 13px;
+	color: var(--gray-900);
+	background: #fff;
+}
+
+a { color: var(--gerrit-blue-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: var(--mono); font-size: 12px; color: var(--gray-700); }
+h1 { font-size: 18px; font-weight: 500; margin: 0; }
+h2 { font-size: 16px; font-weight: 500; margin: 0 0 12px; }
+h3 { font-size: 13px; font-weight: 500; margin: 0 0 6px; color: var(--gray-700); }
+
+/* ---- top bar ---- */
+
+.topbar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 16px;
+	border-bottom: var(--border);
+	background: var(--gray-50);
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+.topbar .logo { font-weight: 500; color: var(--gray-900); }
+.topbar .repo { color: var(--gray-700); }
+.topbar .spacer { flex: 1; }
+.search {
+	font-family: var(--font);
+	font-size: 13px;
+	padding: 4px 8px;
+	border: var(--border);
+	border-radius: 4px;
+	width: 220px;
+}
+.linkish {
+	border: var(--border);
+	background: #fff;
+	border-radius: 4px;
+	cursor: pointer;
+	padding: 3px 9px;
+	font-family: var(--font);
+}
+
+/* ---- page furniture ---- */
+
+main { padding: 16px; }
+
+.pagehead {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 12px;
+}
+.pageactions { display: flex; gap: 8px; align-items: center; }
+.byline { color: var(--gray-700); margin-top: 3px; }
+.empty, .note { color: var(--gray-700); padding: 12px 0; }
+.note {
+	background: var(--orange-50);
+	color: var(--orange-900);
+	padding: 8px 12px;
+	border-radius: 4px;
+	margin: 8px 0;
+}
+
+button {
+	font-family: var(--font);
+	font-size: 13px;
+	padding: 5px 12px;
+	border: var(--border);
+	border-radius: 4px;
+	background: #fff;
+	color: var(--gerrit-blue-light);
+	cursor: pointer;
+}
+button:hover { background: var(--gray-100); }
+button.primary {
+	background: var(--gerrit-blue-light);
+	color: #fff;
+	border-color: var(--gerrit-blue-light);
+}
+button.primary:hover { background: #0d47a1; }
+/* A button whose form is posting: it says what it is doing, and says that
+ * it is still doing it. */
+button.busy, button.busy:hover {
+	opacity: 0.7;
+	cursor: progress;
+	background: var(--gray-100);
+	color: var(--gray-700);
+	border-color: var(--gray-300);
+}
+
+/* ---- chips ---- */
+
+.chip {
+	display: inline-block;
+	padding: 1px 7px;
+	border-radius: 9px;
+	font-size: 11px;
+	line-height: 16px;
+	vertical-align: 1px;
+	background: var(--gray-100);
+	color: var(--gray-800);
+	white-space: nowrap;
+}
+/* Unresolved is asking for something; a draft is asking for something and
+ * has not been sent yet, so it leans as well as stands out. */
+.chip.unresolved { background: var(--red-50); color: var(--red-700); font-weight: bold; }
+.chip.done { background: var(--green-50); color: var(--green-700); }
+.chip.draftchip {
+	background: var(--orange-50);
+	color: var(--orange-900);
+	font-weight: bold;
+	font-style: italic;
+}
+.chip.agentchip { background: var(--blue-50); color: var(--blue-700); }
+.chip.working, .chip.current { background: var(--purple-50); color: var(--purple-900); }
+.chip.stalechip { background: var(--orange-50); color: var(--orange-900); }
+.chip.kind { background: var(--gray-200); color: var(--gray-700); }
+.chip.reviewedchip { background: var(--green-700); color: #fff; font-weight: 500; }
+.chip.lgtmchip { background: var(--blue-700); color: #fff; font-weight: 500; }
+
+/* ---- lists ---- */
+
+table.changelist, table.filelist {
+	width: 100%;
+	border-collapse: collapse;
+}
+/* Rows of the list itself, not of anything nested inside one: a diff
+   expanded inline sits in a table of its own, whose every line would
+   otherwise be ruled off like a row of the list. */
+table.changelist > tbody > tr > td, table.filelist > tbody > tr > td {
+	padding: 6px 8px;
+	border-bottom: var(--border);
+	vertical-align: top;
+}
+tr.item.cursor > td { background: var(--blue-50); }
+tr.item.cursor > td:first-child { box-shadow: inset 3px 0 0 var(--focused-line-outline-color); }
+tr.item:hover > td { background: var(--gray-50); }
+.changelist .subject a, .filelist .name a { color: var(--gray-900); font-weight: 500; }
+.changelist .author, .changelist .when { color: var(--gray-700); }
+.filelist .counts, .changelist .counts { color: var(--gray-700); white-space: nowrap; }
+/* Lines added and deleted by the diff the row opens, in the diff's own
+ * colors. A rebase's lines are not this change's work and are not counted,
+ * so a file it never touched reads +0 -0. */
+.filelist .delta {
+	white-space: nowrap;
+	font-family: var(--mono);
+	font-size: 11px;
+	text-align: right;
+	width: 10ch;
+}
+.filelist .delta .plus { color: var(--green-700); }
+.filelist .delta .minus { color: var(--red-700); }
+.filelist .counts .chip + .chip,
+.changelist .counts .chip + .chip { margin-left: 6px; }
+/* The Gerrit change a commit has been uploaded as, beside its subject in
+   every list, in the color and the type jj log gives a bookmark. It is a
+   link to somewhere else entirely, so it does not take the subject's own
+   color, which the longer selectors are there to say. */
+.cl {
+	font-family: var(--mono);
+	font-size: 12px;
+	white-space: nowrap;
+}
+.clx,
+.changelist .subject a.cl,
+.relchain li.sel a.cl { color: var(--purple-900); font-weight: normal; }
+.relchain li a.cl { flex: none; }
+.changelist .repo { white-space: nowrap; }
+.changelist .repo a { color: var(--gray-700); font-family: var(--mono); font-size: 12px; }
+
+.topbar .sep { color: var(--gray-500); }
+.topbar a.repo { color: var(--gray-900); }
+.topbar .file {
+	font-family: var(--mono);
+	font-size: 12px;
+	color: var(--gray-900);
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 40em;
+}
+
+.repolist { margin-top: 28px; border-top: var(--border); padding-top: 12px; }
+.repolist ul { list-style: none; margin: 0; padding: 0; }
+.repolist li { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; }
+.repolist .path { color: var(--gray-500); font-family: var(--mono); font-size: 11px; }
+/* Files the change does not touch are left out of the list until asked
+ * for. The class sits on the table rather than the rows so that it stays
+ * clear of the filter box, which hides rows with the hidden attribute.
+ * Only rows the server marked are held back: one carrying a comment keeps
+ * its place in the list however its lines got there. */
+table.filelist.hiderebase tr.rebaseonly { display: none; }
+.rebasefoot { padding: 8px 2px; }
+#showrebase {
+	border: 0;
+	background: none;
+	padding: 0;
+	font-size: 12px;
+	color: var(--gray-700);
+}
+#showrebase:hover { background: none; color: var(--gerrit-blue-light); text-decoration: underline; }
+.filelist .status { width: 20px; font-family: var(--mono); color: var(--gray-700); }
+.filelist .status-A { color: var(--green-700); }
+.filelist .status-D { color: var(--red-700); }
+.filelist .reviewedcell { width: 120px; text-align: right; }
+/* The reviewed button is its own indicator: off it is a quiet outline,
+ * on it lights up solid green and stays that way. */
+button.reviewed {
+	font-size: 11px;
+	padding: 2px 9px;
+	color: var(--gray-700);
+	border-color: var(--gray-300);
+}
+button.reviewed:hover { background: var(--green-50); color: var(--green-700); border-color: var(--green-700); }
+button.reviewed.on {
+	background: var(--green-700);
+	color: #fff;
+	border-color: var(--green-700);
+	font-weight: 500;
+}
+button.reviewed.on:hover { background: var(--green-800); color: #fff; }
+/* The third state: a file the change does not touch, in the same tan the
+ * diff uses for lines a rebase brought along. It is filled in rather than
+ * outlined, because there is nothing outstanding here, but not green,
+ * because nobody has read it. Pressing it still marks the file reviewed. */
+button.reviewed.rebase {
+	background: var(--light-rebased-remove-highlight-color);
+	border-color: var(--dark-rebased-remove-highlight-color);
+	color: var(--orange-900);
+}
+button.reviewed.rebase:hover {
+	background: var(--dark-rebased-remove-highlight-color);
+	border-color: var(--orange-900);
+	color: var(--orange-900);
+}
+/* LGTM is a verdict rather than progress, so it lights up blue. */
+button.reviewed.lgtm { font-size: 13px; padding: 5px 12px; color: var(--gerrit-blue-light); border-color: var(--gray-300); }
+button.reviewed.lgtm:hover { background: var(--blue-50); color: var(--blue-700); border-color: var(--blue-700); }
+button.reviewed.lgtm.on { background: var(--blue-700); border-color: var(--blue-700); color: #fff; }
+button.reviewed.lgtm.on:hover { background: var(--gerrit-blue-light); }
+
+.commitmsg {
+	border: var(--border);
+	border-radius: 4px;
+	background: var(--gray-50);
+	padding: 10px 12px;
+	margin-bottom: 12px;
+}
+.commitmsg pre {
+	margin: 0;
+	font-family: var(--mono);
+	font-size: 12px;
+	line-height: 18px;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+.commitmsg summary {
+	cursor: pointer;
+	color: var(--gerrit-blue-light);
+	font-family: var(--font);
+	font-size: 12px;
+	margin-top: 6px;
+	list-style: none;
+}
+.commitmsg summary::-webkit-details-marker { display: none; }
+/* Opened, the summary would stand in the middle of the message it has just
+   finished showing, breaking the text in two. So it goes to the end
+   instead, where it offers to put the message back as it was. */
+.commitmsg details { display: flex; flex-direction: column; }
+.commitmsg details[open] summary { order: 1; }
+.commitmsg details:not([open]) .less,
+.commitmsg details[open] .more { display: none; }
+
+/* The commit message and the relation chain sit side by side, as in
+   Gerrit: what this change says on the left, where it sits on the right. */
+.msgrow { display: flex; align-items: flex-start; gap: 12px; }
+.msgrow .commitmsg { flex: 1 1 auto; min-width: 0; }
+
+.relchain {
+	flex: 0 1 42%;
+	min-width: 0;
+	border: var(--border);
+	border-radius: 4px;
+	background: var(--gray-50);
+	padding: 10px 12px;
+	margin-bottom: 12px;
+}
+.relchain ul { list-style: none; margin: 0; padding: 0; }
+.relchain li {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 20px;
+	padding: 0 4px 0 18px;
+	border-radius: 2px;
+}
+.relchain li a, .relchain li .chip { line-height: 16px; }
+.relchain li a {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.relchain li .graphcell { align-self: stretch; }
+/* The change being viewed keeps its place in the chain rather than being
+   dropped from it, marked by an arrow in a gutter every row leaves free,
+   so that marking it shifts nothing. */
+.relchain li.sel { background: var(--blue-50); }
+.relchain li.sel a { color: var(--gray-900); font-weight: 500; }
+.relchain li.sel::before {
+	content: "→";
+	position: absolute;
+	left: 2px;
+	color: var(--gray-700);
+}
+
+/* ---- the commit graph ---- */
+
+/* The graph is drawn beside a list of changes: a line down the page for
+   each line of development, a node where a change sits on one, and a
+   corner where one line joins another. It is drawn in boxes rather than
+   written in the box characters jj log uses, so that its lines run the
+   whole height of a row however tall the row turns out to be. */
+.graphcell {
+	position: relative;
+	flex: none;
+	padding: 0;
+	overflow: hidden;
+}
+.graphcell .line, .graphcell .corner, .graphcell .node, .graphcell .dot {
+	position: absolute;
+	box-sizing: border-box;
+}
+.graphcell .line { top: 0; bottom: 0; background: var(--gray-500); }
+/* A node's own line stops at the edge of it: drawn through, it would show
+   inside a node that is not filled in. */
+.graphcell .line.up { bottom: calc(50% + 3px); }
+.graphcell .line.down { top: calc(50% + 3px); }
+/* A node is left hollow, so that whatever the row is sitting on shows
+   through it: the page, or the highlight under the row being viewed. */
+.graphcell .node {
+	top: 50%;
+	height: 7px;
+	margin-top: -3.5px;
+	border: 1px solid var(--gray-500);
+	border-radius: 50%;
+}
+/* The working copy is filled in, as jj marks it with @ rather than with
+   the ○ it gives every other commit. */
+.graphcell .node.wc { background: var(--gray-500); }
+/* Two sides of a box, with the turn between them rounded off: down the
+   right, round, and away to the left. */
+.graphcell .corner {
+	top: 0;
+	height: 50%;
+	background: none;
+	border-right: 1px solid var(--gray-500);
+	border-bottom: 1px solid var(--gray-500);
+	border-bottom-right-radius: 7px;
+}
+
+/* Three of these stand in for each line of the changes left out at a
+   trimmed end of a chain: the line goes on past what is drawn. */
+.graphcell .dot {
+	width: 3px;
+	height: 3px;
+	border-radius: 50%;
+	background: var(--gray-500);
+}
+
+/* A join row carries nothing but graph, so it is only as tall as the turn
+   drawn in it needs. */
+.relchain li.joinrow { min-height: 14px; }
+/* Clicking anywhere along the dots asks for that end of the chain whole,
+   so the link covers the row rather than only the dots themselves. */
+.relchain li.morerow { min-height: 17px; align-items: stretch; }
+.relchain li.morerow > a { display: flex; align-items: stretch; flex: 1 1 auto; }
+.relchain li.morerow:hover { background: var(--gray-50); }
+tr.joinrow > td { height: 14px; padding: 0; border-bottom: none; }
+/* The lines have to reach the rows above and below, so the graph column
+   takes no padding and no rule of its own. */
+.changelist .graphcell { border-bottom: none; }
+/* Filtering hides rows, and the graph would then be drawing lines to
+   changes that are no longer there, so it stands aside until the list is
+   whole again. */
+.withgraph.filtered .graphcell, .withgraph.filtered tr.joinrow { display: none; }
+
+/* ---- base selector and snapshot timeline ---- */
+
+.baseselect {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: var(--gray-50);
+	border: var(--border);
+	border-radius: 4px;
+	margin-bottom: 12px;
+}
+.baseselect select { font-family: var(--font); font-size: 13px; padding: 3px 6px; }
+.baseselect .arrow { color: var(--gray-700); }
+
+.timeline { list-style: none; margin: 0 0 16px; padding: 0; }
+.timeline li {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	padding: 4px 8px;
+	border-left: 3px solid var(--gray-300);
+}
+.timeline li.sel { border-left-color: var(--focused-line-outline-color); background: var(--blue-50); }
+.timeline .when, .timeline .subject { color: var(--gray-700); }
+.timeline .snapmarks { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+.autobase {
+	color: var(--gray-700);
+	font-style: italic;
+	margin-left: auto;
+}
+
+.filenav {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 6px 0 12px;
+}
+
+/* ---- diff table ---- */
+
+table.diff {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-family: var(--mono);
+	font-size: 12px;
+	line-height: 18px;
+	border: var(--border);
+}
+col.numcol { width: 6ch; }
+table.diff td { padding: 0; vertical-align: top; }
+
+td.num {
+	text-align: right;
+	color: var(--gray-500);
+	background: var(--gray-50);
+	border-right: var(--border);
+	user-select: none;
+	width: 6ch;
+}
+td.num .linenum {
+	display: block;
+	width: 100%;
+	border: 0;
+	background: none;
+	color: var(--gray-500);
+	font-family: var(--mono);
+	font-size: 12px;
+	line-height: 18px;
+	padding: 0 6px 0 0;
+	text-align: right;
+	border-radius: 0;
+}
+td.num button.linenum { cursor: pointer; }
+td.num button.linenum:hover { background: var(--blue-50); color: var(--blue-700); }
+
+td.code .text {
+	white-space: pre-wrap;
+	/* break-all, not break-word: a long token should fill out the rest of
+	 * the line and continue on the next, rather than moving whole and
+	 * leaving the first line short. */
+	word-break: break-all;
+	padding: 0 6px;
+	min-height: 18px;
+}
+td.code:not(.add):not(.remove) { background: #fff; }
+/* A cell with no line on this side is blank, not empty content. */
+tr.diffrow.insert td.num:first-child,
+tr.diffrow.insert td.code:nth-child(2),
+tr.diffrow.delete td.num:nth-child(3),
+tr.diffrow.delete td.code:nth-child(4) {
+	background: var(--diff-blank-background-color);
+}
+
+/* Gerrit's rule, exactly: pale background for the line, strong background
+ * for the changed part of it, and strong background for the whole line
+ * when there is no intraline information to show. */
+td.code.add .text { background: var(--light-add-highlight-color); }
+td.code.add .text .i { background: var(--dark-add-highlight-color); }
+td.code.add.total .text,
+td.code.add.nointra .text { background: var(--dark-add-highlight-color); }
+
+td.code.remove .text { background: var(--light-remove-highlight-color); }
+td.code.remove .text .i { background: var(--dark-remove-highlight-color); }
+td.code.remove.total .text,
+td.code.remove.nointra .text { background: var(--dark-remove-highlight-color); }
+
+/* An edit the change inherited from a rebase, which Gerrit calls "due to
+ * rebase": lavender in place of green, tan in place of red. The shapes of
+ * the rules match the ones above; they come after them, and the total and
+ * nointra forms name one more class, so that they win on both counts. */
+td.code.add.rebased .text { background: var(--light-rebased-add-highlight-color); }
+td.code.add.rebased .text .i { background: var(--dark-rebased-add-highlight-color); }
+td.code.add.rebased.total .text,
+td.code.add.rebased.nointra .text { background: var(--dark-rebased-add-highlight-color); }
+
+td.code.remove.rebased .text { background: var(--light-rebased-remove-highlight-color); }
+td.code.remove.rebased .text .i { background: var(--dark-rebased-remove-highlight-color); }
+td.code.remove.rebased.total .text,
+td.code.remove.rebased.nointra .text { background: var(--dark-rebased-remove-highlight-color); }
+
+.rebasenote { color: var(--gray-700); padding: 0 0 8px; }
+
+.text .ws { background: var(--diff-trailing-whitespace-indicator); }
+
+tr.diffrow.cursor td { box-shadow: inset 0 -1px 0 var(--focused-line-outline-color), inset 0 1px 0 var(--focused-line-outline-color); }
+tr.diffrow.cursor td.num:first-child { box-shadow: inset 3px 0 0 var(--focused-line-outline-color), inset 0 -1px 0 var(--focused-line-outline-color), inset 0 1px 0 var(--focused-line-outline-color); }
+
+::selection { background: var(--diff-selection-background-color); }
+
+/* Context control, styled as Gerrit's yellow band. */
+tr.skiprow td.skipcell {
+	background: var(--diff-context-control-background-color);
+	border-top: 1px solid var(--diff-context-control-border-color);
+	border-bottom: 1px solid var(--diff-context-control-border-color);
+	text-align: center;
+	padding: 2px;
+}
+button.expand {
+	background: none;
+	border: 0;
+	color: var(--gray-700);
+	font-family: var(--font);
+	font-size: 12px;
+}
+button.expand:hover { text-decoration: underline; background: none; }
+
+/* With the left pane hidden its columns are squeezed to nothing (keys.js
+ * zeroes their widths) and their contents hidden, so the right code
+ * column takes the whole table rather than staying half wide. */
+body.hideleft table.diff td.num:first-child,
+body.hideleft table.diff td.code:nth-child(2) {
+	padding: 0;
+	border-right: 0;
+	background: none;
+}
+body.hideleft table.diff td.num:first-child > *,
+body.hideleft table.diff td.code:nth-child(2) > * { display: none; }
+body.hideleft table.diff tr.threadrow td.threadcell:first-child { display: none; }
+body.hidethreads tr.threadrow { display: none; }
+
+/* ---- comment threads ---- */
+
+/* Deleting the last draft in a thread takes the thread away but leaves
+ * its row, which would show as a blank band between two lines of code.
+ * A row holding neither a thread nor a form has nothing left to say. */
+tr.threadrow:not(:has(.thread)):not(:has(form)) { display: none; }
+
+tr.threadrow td.threadcell {
+	padding: 6px;
+	background: var(--gray-50);
+	border-top: var(--border);
+	border-bottom: var(--border);
+	vertical-align: top;
+}
+
+.thread {
+	font-family: var(--font);
+	font-size: 13px;
+	background: #fff;
+	border: var(--border);
+	border-radius: 4px;
+	padding: 8px;
+	margin-bottom: 6px;
+	max-width: 70em;
+}
+/* Gerrit's color for a thread still waiting on someone: unresolved is the
+ * state a reader is meant to notice. Resolved and stale below override it,
+ * since a thread cannot be both waiting and settled. */
+.thread:not(.resolved) { background: var(--unresolved-comment-background-color); }
+.thread.focused { border-color: var(--focused-line-outline-color); box-shadow: 0 0 0 1px var(--focused-line-outline-color); }
+.thread.resolved { background: var(--gray-50); }
+.thread.stale { border-left: 3px solid var(--orange-900); }
+.thread.collapsed .comments, .thread.collapsed .threadactions { display: none; }
+
+.threadhead { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+.threadhead .where { color: var(--gray-500); font-family: var(--mono); font-size: 11px; margin-left: auto; }
+
+.comment { padding: 6px 0; border-top: 1px solid var(--gray-200); }
+.comment:first-child { border-top: 0; }
+.comment .chead { display: flex; gap: 6px; align-items: center; margin-bottom: 3px; }
+.comment .author { font-weight: 500; }
+.comment .when { color: var(--gray-500); font-size: 11px; }
+.comment .body { white-space: pre-wrap; word-break: break-word; }
+
+/* Agent replies are visually distinct from the reviewer's own comments,
+ * which is the point of tagging them. */
+.comment.agent {
+	border-left: 3px solid var(--gerrit-blue-light);
+	padding-left: 8px;
+	background: var(--blue-50);
+	border-radius: 0 4px 4px 0;
+}
+.comment.draft { background: var(--orange-50); border-radius: 4px; padding-left: 8px; }
+
+.draftactions { margin-left: auto; display: flex; gap: 4px; }
+.linkish.small {
+	font-size: 11px;
+	padding: 0 6px;
+	border: 0;
+	background: none;
+	color: var(--gerrit-blue-light);
+}
+.linkish.small:hover { text-decoration: underline; background: none; }
+.linkish.small.danger { color: var(--red-700); }
+
+.threadactions { display: flex; gap: 6px; margin-top: 6px; }
+/* While a draft is being edited, the thread's own actions are worse than
+ * useless: Edit would target a comment that is now a form, and Resolve
+ * would close the thread and throw the edit away. */
+.thread:has(form.editform) .threadactions { display: none; }
+.threadactions button { font-size: 12px; padding: 3px 9px; }
+
+/* What is left where a deleted draft was, until the page is reloaded or
+ * another file opened. Deleting asks nothing; this is the way back. */
+.undelete {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	font-family: var(--font);
+	font-size: 12px;
+	color: var(--gray-700);
+	padding: 4px 0;
+}
+.undelete form { display: inline; }
+
+.commentform, .replyform { font-family: var(--font); }
+.commentform textarea, .replyform textarea {
+	width: 100%;
+	font-family: var(--font);
+	font-size: 13px;
+	padding: 6px;
+	border: var(--border);
+	border-radius: 4px;
+	resize: vertical;
+}
+.formactions { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.resolvebox { color: var(--gray-700); }
+
+/* ---- comment history on the change page ---- */
+
+.history {
+	margin: 24px 0 20px;
+	padding: 12px 0 4px;
+	border-top: var(--border);
+}
+.history h2 { margin-bottom: 4px; }
+.historysummary {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	color: var(--gray-700);
+	margin-bottom: 10px;
+}
+/* Away from the diff, a thread is read on its own, so it gets more room
+ * and its location is a link back to the line it is attached to. */
+.history .thread { max-width: 60em; margin-bottom: 8px; }
+.history .thread .where { font-family: var(--font); font-size: 12px; }
+
+/* Resolved and unresolved comments, as two tabs. Pure CSS: a pair of
+ * hidden radio buttons and labels for them, with the panel each one
+ * shows picked by a sibling selector. Unresolved is checked by default,
+ * since that is the tab asking for something. */
+.tabs { max-width: 60em; }
+.tabs .tabradio { display: none; }
+.tablabels { display: flex; gap: 4px; border-bottom: var(--border); margin-bottom: 12px; }
+.tablabel {
+	padding: 6px 12px;
+	cursor: pointer;
+	color: var(--gray-700);
+	font-size: 13px;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	user-select: none;
+}
+.tabpanel { display: none; }
+#tab-unresolved:checked ~ .tabpanel[data-tab="unresolved"],
+#tab-resolved:checked ~ .tabpanel[data-tab="resolved"] { display: block; }
+#tab-unresolved:checked ~ .tablabels label[for="tab-unresolved"],
+#tab-resolved:checked ~ .tablabels label[for="tab-resolved"] {
+	color: var(--gray-900);
+	font-weight: 500;
+	border-bottom-color: var(--gerrit-blue-light);
+}
+
+.stalebox {
+	border: 1px solid var(--diff-context-control-border-color);
+	background: var(--diff-context-control-background-color);
+	border-radius: 4px;
+	padding: 10px;
+	margin-bottom: 12px;
+}
+
+.filelisthead { display: flex; justify-content: flex-end; padding-bottom: 6px; }
+#expandall { font-size: 12px; padding: 3px 10px; }
+
+tr.inlinerow > td { padding: 0 0 8px 28px; background: #fff; }
+/* An inline diff is a whole file inside one row of the file list, so it
+ * needs its own frame to read as one rather than running into the rows
+ * above and below. */
+tr.inlinerow table.inlinediff { border: var(--border); margin-top: 4px; }
+
+/* The bar that appears when n or p runs off the end of a diff, telling
+ * you that pressing it again moves to the next or previous file. */
+#navbar {
+	position: fixed;
+	left: 16px;
+	bottom: 16px;
+	z-index: 20;
+	background: var(--gray-900);
+	color: #fff;
+	padding: 10px 16px;
+	border-radius: 4px;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+	font-size: 13px;
+}
+#navbar[hidden] { display: none; }
+
+/* ---- dialogs ---- */
+
+dialog {
+	border: var(--border);
+	border-radius: 8px;
+	padding: 20px;
+	max-width: 900px;
+	max-height: 85vh;
+	overflow: auto;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+dialog::backdrop { background: rgba(0, 0, 0, 0.32); }
+
+.helpcols { columns: 2; column-gap: 32px; }
+.helpbox section { break-inside: avoid; margin-bottom: 14px; }
+.helpbox table { border-collapse: collapse; width: 100%; }
+.helpbox td { padding: 2px 8px 2px 0; vertical-align: top; }
+.helpbox td.keys { white-space: nowrap; text-align: right; width: 12em; }
+.helpbox td.desc { color: var(--gray-800); }
+.helpbox .or { color: var(--gray-500); font-size: 11px; }
+.dismiss { color: var(--gray-700); margin: 12px 0 0; }
+
+kbd {
+	font-family: var(--mono);
+	font-size: 11px;
+	background: var(--gray-100);
+	border: 1px solid var(--gray-300);
+	border-bottom-width: 2px;
+	border-radius: 3px;
+	padding: 1px 5px;
+}
+
+.prefsbox { display: flex; flex-direction: column; gap: 10px; min-width: 260px; }
+.prefsbox label { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.prefsbox input[type="number"] { width: 6em; padding: 3px 6px; }
+
+/* ---- forkyou additions ----
+ * Copyright 2026 The Forkyou Authors. Same license. */
+
+.topbar .goform { margin: 0; }
+.topbar .goform .search { width: 300px; }
+.topbar .viewer { color: var(--gray-700); font-size: 12px; }
+.topbar .viewer.anon { color: var(--orange-900); }
+a.button {
+	display: inline-block;
+	font-size: 13px;
+	padding: 5px 12px;
+	border: var(--border);
+	border-radius: 4px;
+	background: #fff;
+}
+a.button:hover { background: var(--gray-100); text-decoration: none; }
+button.approve { color: #fff; background: var(--green-700); border-color: var(--green-700); }
+button.approve:hover { background: var(--green-800); }
+button.danger { color: var(--red-700); }
+.prnum { color: var(--gray-500); font-weight: 400; }
+.byline code { font-size: 12px; }
+.votes { margin-top: 6px; display: flex; gap: 6px; }
+.chip.state-open { background: var(--green-700); color: #fff; }
+.chip.state-closed { background: var(--red-700); color: #fff; }
+.chip.state-merged { background: var(--purple-900); color: #fff; }
+.chip.rebasedchip {
+	background: var(--light-rebased-add-highlight-color);
+	color: var(--purple-900);
+	border: 1px solid var(--dark-rebased-add-highlight-color);
+}
+.chip.review-approved { background: var(--green-50); color: var(--green-700); font-weight: 500; }
+.chip.review-changesrequested { background: var(--red-50); color: var(--red-700); font-weight: 500; }
+.chip.review-commented { background: var(--gray-100); color: var(--gray-700); }
+.hint { color: var(--gray-500); font-size: 12px; font-weight: 400; margin-left: 8px; }
+p.hint { margin: 0 0 8px; }
+.errorbox { white-space: pre-wrap; background: var(--red-50); color: var(--red-700); padding: 12px; border-radius: 4px; }
+.note.flash { background: var(--red-50); color: var(--red-700); }
+.homesection { margin-bottom: 24px; }
+.changelist .num { color: var(--gray-500); white-space: nowrap; width: 5em; }
+
+.prbody summary { cursor: pointer; color: var(--gray-700); font-family: var(--font); }
+.prbody .markdown { margin-top: 8px; }
+
+/* Markdown as GitHub rendered it. */
+.markdown { font-family: var(--font); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.markdown > :first-child { margin-top: 0; }
+.markdown > :last-child { margin-bottom: 0; }
+.markdown p, .markdown ul, .markdown ol, .markdown pre, .markdown blockquote { margin: 0 0 8px; }
+.markdown pre { background: var(--gray-50); border: var(--border); border-radius: 4px; padding: 8px; overflow-x: auto; font-family: var(--mono); font-size: 12px; }
+.markdown code { background: var(--gray-100); padding: 0 3px; border-radius: 3px; color: var(--gray-900); }
+.markdown pre code { background: none; padding: 0; }
+.markdown blockquote { border-left: 3px solid var(--gray-300); padding-left: 10px; color: var(--gray-700); }
+.markdown img { max-width: 100%; }
+.markdown table { border-collapse: collapse; }
+.markdown td, .markdown th { border: var(--border); padding: 3px 6px; }
+/* GitHub's suggested-change blocks arrive as its own markup. */
+.markdown .js-suggested-changes-blob { border: var(--border); border-radius: 4px; margin: 6px 0; }
+.markdown .js-suggested-changes-blob .blob-num { display: none; }
+.markdown .js-suggested-changes-blob table { width: 100%; font-family: var(--mono); font-size: 12px; }
+.markdown .js-suggested-changes-blob td { border: 0; padding: 0 6px; white-space: pre-wrap; }
+.markdown .blob-code-deletion { background: var(--light-remove-highlight-color); }
+.markdown .blob-code-addition { background: var(--light-add-highlight-color); }
+.markdown .blob-code-marker-deletion::before { content: "-"; }
+.markdown .blob-code-marker-addition::before { content: "+"; }
+.markdown .f6 { font-size: 11px; color: var(--gray-700); padding: 4px 6px; border-bottom: var(--border); }
+.comment .body.plain { white-space: pre-wrap; }
+.avatar { border-radius: 50%; vertical-align: middle; }
+
+/* ---- snapshots ---- */
+.snapshots { margin-bottom: 12px; }
+.snapshots h2 { margin-bottom: 6px; }
+table.snaptable { width: 100%; border-collapse: collapse; }
+table.snaptable td { padding: 3px 8px; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+table.snaptable td.subject { white-space: normal; color: var(--gray-700); width: 100%; }
+table.snaptable td.sn { font-weight: 500; width: 2em; text-align: right; border-left: 3px solid var(--gray-300); }
+table.snaptable tr.sel td { background: var(--blue-50); }
+table.snaptable tr.sel td.sn { border-left-color: var(--focused-line-outline-color); }
+table.snaptable tr.isbase td.sn { border-left-color: var(--gray-700); }
+table.snaptable tr.missing td { color: var(--gray-500); }
+table.snaptable .when { color: var(--gray-700); }
+table.snaptable .chips .chip + .chip { margin-left: 4px; }
+table.snaptable td.snapmarks { text-align: right; }
+
+details.commits { margin: 0 0 12px; }
+details.commits summary { cursor: pointer; color: var(--gray-700); }
+details.commits ol { margin: 6px 0; padding-left: 24px; }
+details.commits .when { color: var(--gray-500); font-size: 11px; }
+
+/* ---- conversation ---- */
+.conversation { margin: 24px 0; padding-top: 12px; border-top: var(--border); max-width: 70em; }
+.convitem { border: var(--border); border-radius: 4px; padding: 8px 10px; margin-bottom: 8px; }
+.convitem.review-approved { border-left: 3px solid var(--green-700); }
+.convitem.review-changesrequested { border-left: 3px solid var(--red-700); }
+.convitem .chead { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
+.convitem .author { font-weight: 500; }
+.convitem .when, .convpush .when { color: var(--gray-500); font-size: 11px; }
+.convpush { color: var(--gray-700); padding: 4px 10px; margin-bottom: 8px; font-size: 12px; }
+
+/* ---- comments ---- */
+.filetop { margin-bottom: 8px; }
+.filetop:empty { display: none; }
+.formwhere { color: var(--gray-700); font-size: 12px; margin-bottom: 4px; }
+.willresolve { color: var(--green-700); font-size: 11px; font-style: italic; }
+.thread.draftthread { border-style: dashed; }
+td.num button.linenum.rangestart { background: var(--diff-highlight-range-color); }
+tr.diffrow.inrange td.code .text { box-shadow: inset 3px 0 0 var(--diff-highlight-range-color); }
+
+/* ---- reply dialog ---- */
+.replydialog { width: min(800px, 90vw); }
+.replybox textarea { width: 100%; font-family: var(--font); font-size: 13px; padding: 6px; border: var(--border); border-radius: 4px; }
+.replydrafts { color: var(--gray-700); margin: 8px 0; }
+
+/* ---- range-diff ---- */
+pre.rangediff {
+	font-family: var(--mono);
+	font-size: 12px;
+	line-height: 18px;
+	border: var(--border);
+	border-radius: 4px;
+	padding: 8px 0;
+	overflow-x: auto;
+	margin: 0;
+}
+.rdline { padding: 0 10px; white-space: pre; }
+.rdhead { font-weight: 500; background: var(--gray-50); margin-top: 6px; }
+.rdhead.rdsame { color: var(--gray-500); font-weight: 400; background: none; margin-top: 0; }
+.rdhead.rdchanged { background: var(--blue-50); }
+.rdhead.rddropped { background: var(--light-remove-highlight-color); }
+.rdhead.rdadded { background: var(--light-add-highlight-color); }
+.rdhunk { color: var(--gray-500); }
+.rdold { background: var(--dark-remove-highlight-color); }
+.rdnew { background: var(--dark-add-highlight-color); }
+.rdctxadd { background: var(--light-add-highlight-color); }
+.rdctxdel { background: var(--light-remove-highlight-color); }

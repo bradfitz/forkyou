@@ -1,0 +1,36 @@
+{{template "head" .}}
+<main class="changes">
+  <div class="pagehead"><h1>Pull requests</h1></div>
+  {{if not .Viewer}}
+  <p class="note">Not logged in to GitHub, so there is no list of pull requests waiting for you.
+  Run <code>gh auth login</code> or set <code>$GITHUB_TOKEN</code> and restart.
+  Public pull requests can still be viewed: paste a URL in the box above.</p>
+  {{end}}
+  {{range .Sections}}
+  <section class="homesection">
+    <h2>{{.Title}}</h2>
+    {{if .Error}}<p class="note">{{.Error}}</p>
+    {{else if not .Items}}<p class="empty">None.</p>
+    {{else}}{{template "prlist" .Items}}{{end}}
+  </section>
+  {{end}}
+  {{if .Recent}}
+  <section class="homesection">
+    <h2>Recently viewed</h2>
+    <table class="changelist">
+      <tbody>
+      {{range .Recent}}
+      <tr class="item" data-href="{{.URL}}" data-filter="{{.Key.Owner}}/{{.Key.Repo}} {{.Title}} {{.Author}}">
+        <td class="repo"><a href="/{{.Key.Owner}}/{{.Key.Repo}}">{{.Key.Owner}}/{{.Key.Repo}}</a></td>
+        <td class="num">#{{.Key.Number}}</td>
+        <td class="subject"><a href="{{.URL}}">{{.Title}}</a>{{if ne .State "open"}} <span class="chip">{{.State}}</span>{{end}}</td>
+        <td class="author">{{.Author}}</td>
+        <td class="when">{{since .Viewed}}</td>
+      </tr>
+      {{end}}
+      </tbody>
+    </table>
+  </section>
+  {{end}}
+</main>
+{{template "foot" .}}
