@@ -61,9 +61,9 @@ type PR struct {
 	FetchedAt     time.Time
 	Git           *GitRepo
 
-	mu      sync.Mutex
-	blobs   map[string][]byte        // by "rev:path" or OID
-	diffs   map[string]*FileDiff     // by diffKey
+	mu       sync.Mutex
+	blobs    map[string][]byte        // by "rev:path" or OID
+	diffs    map[string]*FileDiff     // by diffKey
 	commits  map[string][]*CommitInfo // by snapshot head
 	messages map[string]string        // commit messages, by commit
 }
