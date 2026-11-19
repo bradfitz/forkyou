@@ -7,9 +7,9 @@ alpha line 6
 alpha line 7
 alpha line 8
 alpha line 9
-alpha line 10
+alpha line 10, improved by the PR
 alpha line 11
-alpha line 12
+alpha line 12, changed in response to review
 alpha line 13
 alpha line 14
 alpha line 15
