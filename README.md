@@ -72,6 +72,17 @@ ones that changed are flagged ("changed since snapshot 2", linking to the
 range-diff). In a commit's diff, `]` and `M` carry on into the next commit,
 and comments written there are published on the same line of the newest head.
 
+**The commit message is a file.** As in Gerrit, each commit's message is
+reviewed as a file named `/COMMIT_MSG`, listed first. Against the parent it
+reads as new; between two snapshots it shows how the message was reworded,
+as does the range-diff. Comment on its lines like any other file. GitHub has
+no place for such comments, so they are published in the review's body, as
+sections that read naturally on github.com (quoting the commit and line) and
+carry an invisible marker that forkyou reads back, so they show up here as
+threads on the message, follow the commit across rewrites, and can be
+replied to and resolved. Comments on files outside the PR use the same
+mechanism.
+
 **Reviewed marks.** Mark files or whole snapshots reviewed. A file's mark
 carries over to later snapshots in which it didn't change. Once a snapshot is
 marked reviewed, later visits default to showing what changed since then.

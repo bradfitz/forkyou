@@ -292,9 +292,15 @@ func (s *server) publish(ctx context.Context, pr *PR, d *Drafts, event, body str
 	}
 	res := &publishResult{}
 	for _, dt := range d.Threads {
+		if isCommitMsg(dt.File) {
+			// GitHub has no place for these at all; see commitmsg.go.
+			bodyParts = append(bodyParts, bodyThreadSection(dt, commitMsgQuote(ctx, pr, dt)+dt.Body))
+			res.Published = append(res.Published, dt.ID)
+			continue
+		}
 		p := placeDraft(ctx, pr, dt, latest, hunks)
 		if p.InBody {
-			bodyParts = append(bodyParts, p.Body)
+			bodyParts = append(bodyParts, bodyThreadSection(dt, p.Body))
 			res.Published = append(res.Published, dt.ID)
 			continue
 		}
@@ -307,6 +313,11 @@ func (s *server) publish(ctx context.Context, pr *PR, d *Drafts, event, body str
 	var replies []replyReq
 	for _, r := range d.Replies {
 		t := pr.Thread(r.ThreadID)
+		if t != nil && t.InBody {
+			bodyParts = append(bodyParts, bodyReplySection(t, r))
+			res.Published = append(res.Published, r.ID)
+			continue
+		}
 		if t == nil || t.NodeID == "" {
 			return nil, fmt.Errorf("cannot reply to thread %s: it is gone from GitHub, or its ID is unknown", r.ThreadID)
 		}

@@ -165,7 +165,20 @@ func (pr *PR) loadCommits(ctx context.Context, s *Snapshot) []*CommitInfo {
 		log.Printf("%v: prefetch: %v", pr.Key, err)
 	}
 	for _, ci := range out {
+		if !ci.Merge {
+			// The message is the commit's first file, as in Gerrit. Its
+			// lines are not counted among the commit's code.
+			msg := commitMsgText(ci.Commit)
+			fd := Diff(nil, []byte(msg))
+			ci.Files = append([]*CommitFile{{
+				Path: commitMsgPath, Status: 'A', Added: len(fd.Rows),
+				FP: fingerprint(commitMsgPath, fd, "", ""),
+			}}, ci.Files...)
+		}
 		for _, f := range ci.Files {
+			if isCommitMsg(f.Path) {
+				continue
+			}
 			fd := pr.blobDiff(ctx, f.OldOID, f.NewOID)
 			f.Binary = fd.Binary
 			for _, r := range fd.Rows {

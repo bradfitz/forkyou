@@ -112,6 +112,7 @@
     {{if .Other}}<span class="chip snap" title="written against an earlier snapshot">snapshot {{.SnapshotN}}</span>{{end}}
     {{if .Stale}}<span class="chip stalechip" title="the line this was attached to is gone">stale</span>{{end}}
     {{if .Outdated}}<span class="chip" title="GitHub calls this thread outdated">outdated</span>{{end}}
+    {{if .InBody}}<span class="chip" title="GitHub has no place for this comment, so it lives in the body of a review; reply here, or Done, to resolve it">in review body</span>{{end}}
     {{if .Resolved}}<span class="chip done">resolved</span>{{end}}
     {{if and .StartLine (not .Link)}}<span class="chip" title="a comment on a range of lines">lines {{.StartLine}}-{{.Line}}</span>{{end}}
     {{if and (eq .Line 0) (not .Link)}}<span class="chip">file comment</span>{{end}}

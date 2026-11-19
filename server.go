@@ -461,7 +461,11 @@ type threadFrag struct {
 func (p *prPage) TF(t *Thread) *threadFrag { return &threadFrag{Thread: t, P: p} }
 
 // CanResolve reports whether the thread's resolution can be changed here.
-func (t *threadFrag) CanResolve() bool { return t.Draft != nil || (t.NodeID != "" && t.P.Viewer != "") }
+func (t *threadFrag) CanResolve() bool {
+	// A thread kept in a review body is resolved by a reply saying so,
+	// there being nothing on GitHub to flip.
+	return t.Draft != nil || (!t.InBody && t.NodeID != "" && t.P.Viewer != "")
+}
 
 // ThreadLink is where a thread lives: for a comment on the newest
 // snapshot, that snapshot; for one on an older snapshot, a comparison
@@ -507,7 +511,27 @@ func (s *server) fileReviewed(ctx context.Context, pr *PR, marks *Reviewed, t *S
 		}
 	}
 	paths = compactStrings(paths)
+	// The commit message is not in the tree; its mark carries only to a
+	// snapshot whose messages read the same.
+	msgMarked := slices.Contains(paths, commitMsgPath)
+	paths = slices.DeleteFunc(paths, isCommitMsg)
+	if msgMarked {
+		tMsg, _ := pr.snapshotMsg(ctx, t)
+		for _, sn := range pr.Snapshots {
+			if sn.N > t.N || sn.Missing || !marks.Files[sn.Head][commitMsgPath] {
+				continue
+			}
+			if m, _ := pr.snapshotMsg(ctx, sn); m == tMsg {
+				out[commitMsgPath] = true
+			}
+		}
+	}
 	if len(paths) == 0 {
+		for p, on := range marks.Files[t.Head] {
+			if !on {
+				delete(out, p)
+			}
+		}
 		return out
 	}
 	tHead, _ := pr.Git.BlobOIDs(ctx, t.Head, paths)
@@ -526,7 +550,7 @@ func (s *server) fileReviewed(ctx context.Context, pr *PR, marks *Reviewed, t *S
 			sBase, _ = pr.Git.BlobOIDs(ctx, sn.Base, paths)
 		}
 		for p, on := range m {
-			if !on {
+			if !on || isCommitMsg(p) {
 				continue
 			}
 			if sn == t || (sHead[p] == tHead[p] && sBase[p] == tBase[p]) {
@@ -941,6 +965,10 @@ func (p *prPage) fileThreads(ctx context.Context, f *ViewFile) (old, new []byte,
 	old, new = p.Contents(ctx, f)
 	oldLines, _ := splitLines(old)
 	newLines, _ := splitLines(new)
+	if isCommitMsg(f.Path) {
+		left, right := p.placeMsgThreads(ctx, p.Threads, oldLines, newLines)
+		return old, new, ThreadsByLine(left), ThreadsByLine(right)
+	}
 	left, right := p.PlaceThreads(p.Threads, f.Path, oldLines, newLines)
 	return old, new, ThreadsByLine(left), ThreadsByLine(right)
 }
@@ -1236,7 +1264,30 @@ func (s *server) commentFrag(w http.ResponseWriter, req *http.Request, k PRKey) 
 		start = 0
 	}
 	anchor := ""
-	if line > 0 {
+	viewLine := line
+	if isCommitMsg(file) {
+		c, n, err := p.msgTarget(ctx, side, line)
+		if err != nil {
+			return err
+		}
+		if start > 0 {
+			sc, sn, err := p.msgTarget(ctx, side, start)
+			if err != nil || sc != c {
+				return badRequest("a comment on a commit message must stay within one commit's message")
+			}
+			start = sn
+		}
+		head, commit, snapSide, line = p.Target.Head, c, "new", n
+		if side == "left" && p.Base != nil {
+			head = p.Base.Head
+		}
+		if line > 0 {
+			msgLines := strings.Split(p.PR.commitMessage(ctx, c), "\n")
+			if line <= len(msgLines) {
+				anchor = msgLines[line-1]
+			}
+		}
+	} else if line > 0 {
 		lines := p.PR.lines(ctx, rev, file)
 		if line > len(lines) {
 			return badRequest("%s has no line %d", file, line)
@@ -1265,7 +1316,7 @@ func (s *server) commentFrag(w http.ResponseWriter, req *http.Request, k PRKey) 
 			t = x.clone()
 		}
 	}
-	t.ShowLine = line
+	t.ShowLine = viewLine
 	w.Header().Set("X-Drafts", strconv.Itoa(d.Count()))
 	if line == 0 {
 		return render(w, "thread", p.TF(t))
@@ -1499,7 +1550,7 @@ func (s *server) snapReviewedFrag(w http.ResponseWriter, req *http.Request, k PR
 	on := !marks.Snapshots[sn.Head]
 	err = s.store.UpdateReviewed(k, func(r *Reviewed) {
 		r.Snapshots[sn.Head] = on
-		m := map[string]bool{}
+		m := map[string]bool{commitMsgPath: on}
 		for _, f := range files {
 			m[f.Path] = on
 		}

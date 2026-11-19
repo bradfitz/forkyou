@@ -64,7 +64,8 @@ type PR struct {
 	mu      sync.Mutex
 	blobs   map[string][]byte        // by "rev:path" or OID
 	diffs   map[string]*FileDiff     // by diffKey
-	commits map[string][]*CommitInfo // by snapshot head
+	commits  map[string][]*CommitInfo // by snapshot head
+	messages map[string]string        // commit messages, by commit
 }
 
 // Latest returns the newest snapshot, or nil if there are none.
@@ -318,6 +319,9 @@ type Thread struct {
 	Outdated  bool
 	URL       string
 	Comments  []*Comment
+	// InBody reports that the thread was published in the body of a
+	// review, there being no place for it in GitHub's diff (see commitmsg.go).
+	InBody bool
 
 	// Draft is the thread's own draft, for a thread not yet published.
 	Draft *DraftThread
@@ -665,7 +669,7 @@ func (s *server) loadPR(ctx context.Context, k PRKey) (*PR, error) {
 	slices.Sort(paths)
 	paths = slices.Compact(paths)
 	pr.prefetchPaths(ctx, compactStrings(revs), paths)
-	pr.Threads = buildThreads(ctx, pr)
+	pr.Threads = append(buildThreads(ctx, pr), buildBodyThreads(ctx, pr)...)
 	return pr, nil
 }
 

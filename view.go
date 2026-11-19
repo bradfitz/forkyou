@@ -162,6 +162,10 @@ func newView(ctx context.Context, pr *PR, base, target, commit string, marks *Re
 		v.Base, v.AutoBase = nil, false
 		v.NCommits = len(pr.Commits(ctx, v.Target))
 		for _, f := range v.Commit.Files {
+			if isCommitMsg(f.Path) {
+				v.Files = append(v.Files, &ViewFile{Path: f.Path, Status: f.Status, Own: true, Added: f.Added})
+				continue
+			}
 			v.Files = append(v.Files, &ViewFile{Path: f.Path, Status: f.Status, OldOID: f.OldOID, NewOID: f.NewOID, Own: true,
 				Added: f.Added, Deleted: f.Deleted, Binary: f.Binary})
 		}
@@ -170,6 +174,7 @@ func newView(ctx context.Context, pr *PR, base, target, commit string, marks *Re
 	if err := v.listFiles(ctx, threads); err != nil {
 		return nil, err
 	}
+	v.Files = append([]*ViewFile{v.msgFile(ctx)}, v.Files...)
 	return v, nil
 }
 
@@ -244,7 +249,7 @@ func (v *View) listFiles(ctx context.Context, threads []*Thread) error {
 	}
 	var extra []*ViewFile
 	for _, t := range threads {
-		if !listed[t.File] && v.PR.blob(ctx, v.RightRev(), t.File) != nil {
+		if !listed[t.File] && !isCommitMsg(t.File) && v.PR.blob(ctx, v.RightRev(), t.File) != nil {
 			listed[t.File] = true
 			extra = append(extra, &ViewFile{Path: t.File})
 		}
@@ -256,6 +261,9 @@ func (v *View) listFiles(ctx context.Context, threads []*Thread) error {
 
 // Contents returns the two sides of a file.
 func (v *View) Contents(ctx context.Context, f *ViewFile) (old, new []byte) {
+	if isCommitMsg(f.Path) {
+		return v.msgContents(ctx)
+	}
 	if f.Status == 0 {
 		data := v.PR.blob(ctx, v.RightRev(), f.Path)
 		return v.PR.blob(ctx, v.LeftRev(), f.Path), data
@@ -267,6 +275,10 @@ func (v *View) Contents(ctx context.Context, f *ViewFile) (old, new []byte) {
 // rebase marked. Diffs are cached, since a page draws the file list's
 // counts and then, often, the very same file.
 func (v *View) Diff(ctx context.Context, f *ViewFile) *FileDiff {
+	if isCommitMsg(f.Path) {
+		old, new := v.msgContents(ctx)
+		return Diff(old, new)
+	}
 	if f.Status != 0 && !v.Rebased() {
 		return v.PR.blobDiff(ctx, f.OldOID, f.NewOID)
 	}

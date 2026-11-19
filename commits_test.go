@@ -64,7 +64,12 @@ func TestCommitReview(t *testing.T) {
 	if b := commitBlocks(w.Body.String()); len(b) != 1 || !strings.HasPrefix(b[0], "folded") || !strings.Contains(b[0], "✓ reviewed") {
 		t.Errorf("after marking commit 1 reviewed, its block = %q, want folded and reviewed", b)
 	}
+	// Its message is a file to review like the others.
 	w = e.post(e.pr+"/x/reviewed?s=1&c="+shas[2]+"&f=three.txt&block=1", nil)
+	if b := commitBlocks(w.Body.String()); len(b) != 1 || !strings.HasPrefix(b[0], "open") || !strings.Contains(b[0], "1/2") {
+		t.Errorf("with commit 3's message still unreviewed, its block = %q, want open at 1/2", b)
+	}
+	w = e.post(e.pr+"/x/reviewed?s=1&c="+shas[2]+"&f=%2FCOMMIT_MSG&block=1", nil)
 	if b := commitBlocks(w.Body.String()); len(b) != 1 || !strings.HasPrefix(b[0], "folded") {
 		t.Errorf("after marking commit 3's only file reviewed, its block = %q, want folded", b)
 	}
