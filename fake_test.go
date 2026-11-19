@@ -414,7 +414,7 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, req *http.Request) {
 				}
 				f.nextID++
 				rv := GHReview{ID: f.nextID, User: GHUser{Login: f.viewer}, Body: v.Body, BodyHTML: "<p>" + v.Body + "</p>",
-					State: map[string]string{"COMMENT": "COMMENTED", "APPROVE": "APPROVED", "REQUEST_CHANGES": "CHANGES_REQUESTED"}[v.Event],
+					State:    map[string]string{"COMMENT": "COMMENTED", "APPROVE": "APPROVED", "REQUEST_CHANGES": "CHANGES_REQUESTED"}[v.Event],
 					CommitID: f.pending.commit, SubmittedAt: time.Now()}
 				f.reviews = append(f.reviews, rv)
 				newThreads := 0

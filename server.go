@@ -37,6 +37,13 @@ type server struct {
 	repos map[string]*GitRepo
 	prs   map[PRKey]*prEntry
 
+	// The dashboard's searches, which GitHub answers slowly (seconds)
+	// and without ETags, so they are kept and refreshed in the background.
+	homeMu      sync.Mutex
+	homeCache   []*homeSection
+	homeAt      time.Time
+	homeLoading bool
+
 	mux *http.ServeMux
 }
 
@@ -139,6 +146,13 @@ func (s *server) getPR(ctx context.Context, k PRKey, maxAge time.Duration) (*PR,
 		return e.pr, nil
 	}
 	pr, err := s.loadPR(ctx, k)
+	if err == nil && e.pr != nil {
+		// File contents and diffs are named by commit IDs, which never
+		// change, so whatever the last load read is still good.
+		e.pr.mu.Lock()
+		pr.blobs, pr.diffs = e.pr.blobs, e.pr.diffs
+		e.pr.mu.Unlock()
+	}
 	if err != nil {
 		if e.pr != nil {
 			// Better a page a minute old than no page at all.
@@ -510,46 +524,75 @@ type homeSection struct {
 
 var repoURLRE = regexp.MustCompile(`/repos/([^/]+)/([^/]+)$`)
 
+// homeStale is how old the dashboard's searches may be before a visit
+// refreshes them, in the background, for the next visit.
+const homeStale = 30 * time.Second
+
 func (s *server) home(w http.ResponseWriter, req *http.Request) error {
 	p := &homePage{head: head{Title: "forkyou", Page: "home", Viewer: s.viewer}}
 	if s.viewer != "" {
-		queries := []struct{ title, q string }{
-			{"Review requested", "is:open is:pr review-requested:@me archived:false"},
-			{"Your pull requests", "is:open is:pr author:@me archived:false"},
-			{"Reviewed by you, still open", "is:open is:pr reviewed-by:@me -author:@me archived:false"},
+		s.homeMu.Lock()
+		cached, at, loading := s.homeCache, s.homeAt, s.homeLoading
+		fresh := req.FormValue("refresh") == ""
+		if cached != nil && fresh && time.Since(at) > homeStale && !loading {
+			s.homeLoading = true
+			go func() {
+				secs := s.searchHome(context.Background())
+				s.homeMu.Lock()
+				s.homeCache, s.homeAt, s.homeLoading = secs, time.Now(), false
+				s.homeMu.Unlock()
+			}()
 		}
-		p.Sections = make([]*homeSection, len(queries))
-		var wg sync.WaitGroup
-		for i, q := range queries {
-			sec := &homeSection{Title: q.title}
-			p.Sections[i] = sec
-			wg.Go(func() {
-				var res GHSearchResult
-				err := s.gh.Get(req.Context(), "/search/issues?per_page=50&sort=updated&q="+url.QueryEscape(q.q), &res)
-				if err != nil {
-					sec.Error = err.Error()
-					return
-				}
-				for _, it := range res.Items {
-					m := repoURLRE.FindStringSubmatch(it.RepositoryURL)
-					if m == nil {
-						continue
-					}
-					sec.Items = append(sec.Items, &prListItem{
-						Key: PRKey{m[1], m[2], it.Number}, Title: it.Title, Author: it.User.Login,
-						Updated: it.UpdatedAt, Draft: it.Draft, Comments: it.Comments,
-						RepoLabel: m[1] + "/" + m[2],
-					})
-				}
-			})
+		s.homeMu.Unlock()
+		if cached == nil || !fresh {
+			cached = s.searchHome(req.Context())
+			s.homeMu.Lock()
+			s.homeCache, s.homeAt = cached, time.Now()
+			s.homeMu.Unlock()
 		}
-		wg.Wait()
+		p.Sections = cached
 	}
 	p.Recent = s.store.Recent()
 	if len(p.Recent) > 15 {
 		p.Recent = p.Recent[:15]
 	}
 	return render(w, "home.html", p)
+}
+
+// searchHome runs the dashboard's searches, in parallel.
+func (s *server) searchHome(ctx context.Context) []*homeSection {
+	queries := []struct{ title, q string }{
+		{"Review requested", "is:open is:pr review-requested:@me archived:false"},
+		{"Your pull requests", "is:open is:pr author:@me archived:false"},
+		{"Reviewed by you, still open", "is:open is:pr reviewed-by:@me -author:@me archived:false"},
+	}
+	sections := make([]*homeSection, len(queries))
+	var wg sync.WaitGroup
+	for i, q := range queries {
+		sec := &homeSection{Title: q.title}
+		sections[i] = sec
+		wg.Go(func() {
+			var res GHSearchResult
+			err := s.gh.Get(ctx, "/search/issues?per_page=50&sort=updated&q="+url.QueryEscape(q.q), &res)
+			if err != nil {
+				sec.Error = err.Error()
+				return
+			}
+			for _, it := range res.Items {
+				m := repoURLRE.FindStringSubmatch(it.RepositoryURL)
+				if m == nil {
+					continue
+				}
+				sec.Items = append(sec.Items, &prListItem{
+					Key: PRKey{m[1], m[2], it.Number}, Title: it.Title, Author: it.User.Login,
+					Updated: it.UpdatedAt, Draft: it.Draft, Comments: it.Comments,
+					RepoLabel: m[1] + "/" + m[2],
+				})
+			}
+		})
+	}
+	wg.Wait()
+	return sections
 }
 
 // goURL turns a github.com URL into the same page here.

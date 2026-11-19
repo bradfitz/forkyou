@@ -229,7 +229,7 @@ func TestCommentAndPublish(t *testing.T) {
 			t.Fatalf("draft %q not echoed back: %s", body, w.Body.String())
 		}
 	}
-	draft("f=a.txt&base=parent&s=2", 12, 0, "nice line 12")      // in GitHub's diff
+	draft("f=a.txt&base=parent&s=2", 12, 0, "nice line 12")       // in GitHub's diff
 	draft("f=a.txt&base=parent&s=1", 10, 0, "about snapshot one") // carried over to snapshot 2
 	draft("f=a.txt&base=parent&s=2", 30, 0, "far from the diff")  // outside every hunk
 	draft("f=a.txt&base=parent&s=2", 11, 9, "a range")            // lines 9-11
@@ -371,9 +371,9 @@ func TestReviewedMarks(t *testing.T) {
 func TestGoURL(t *testing.T) {
 	e := newTestEnv(t)
 	for in, want := range map[string]string{
-		"/go?u=https://github.com/acme/widget/pull/7":          "/acme/widget/pull/7",
-		"/go?u=acme/widget/pull/7/files":                      "/acme/widget/pull/7",
-		"/github.com/acme/widget/pull/7":                      "/acme/widget/pull/7",
+		"/go?u=https://github.com/acme/widget/pull/7":        "/acme/widget/pull/7",
+		"/go?u=acme/widget/pull/7/files":                     "/acme/widget/pull/7",
+		"/github.com/acme/widget/pull/7":                     "/acme/widget/pull/7",
 		"/go?u=" + url.QueryEscape("github.com/acme/widget"): "/acme/widget",
 	} {
 		w := e.do("GET", in, nil)
