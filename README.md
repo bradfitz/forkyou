@@ -62,6 +62,16 @@ review body if the file isn't in the PR at all. Nothing gets dropped.
 Replies can also be marked to resolve when published. "Done" drafts a "Done"
 reply that resolves the thread.
 
+**Commit by commit.** A snapshot with several commits lists them in order,
+each with its own files, so a stack can be read the way it was written.
+Mark files or a whole commit reviewed, and a reviewed commit folds away.
+Marks are kept on what each file's change says, not on commit IDs, so they
+survive the next push: when a stack is rebased or a later commit is reworked,
+commits whose changes are the same come up still reviewed and folded, and the
+ones that changed are flagged ("changed since snapshot 2", linking to the
+range-diff). In a commit's diff, `]` and `M` carry on into the next commit,
+and comments written there are published on the same line of the newest head.
+
 **Reviewed marks.** Mark files or whole snapshots reviewed. A file's mark
 carries over to later snapshots in which it didn't change. Once a snapshot is
 marked reviewed, later visits default to showing what changed since then.

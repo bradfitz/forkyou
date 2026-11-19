@@ -1,4 +1,12 @@
 {{define "baseselect"}}
+{{if .Commit}}
+<div class="baseselect commitnav">
+  <span class="chip snap">commit {{.Commit.Index}} of {{.NCommits}}</span>
+  <code title="{{.Commit.SHA}}">{{.Commit.ShortSHA}}</code> <b>{{.Commit.Subject}}</b>
+  <span class="hint">in snapshot {{.Target.N}}, against its parent</span>
+  <a href="{{.PRURL}}/diff{{.Query "c" "" "f" .FileParam}}">this file in the whole snapshot</a>
+</div>
+{{else}}
 <form class="baseselect" method="get" action="{{if eq .Page "rangediff"}}{{.PRURL}}/rangediff{{else if eq .Page "diff"}}{{.PRURL}}/diff{{else}}{{.PRURL}}{{end}}">
   <label>Base
     <select name="base" onchange="this.form.submit()">
@@ -25,6 +33,7 @@
   <span class="autobase" title="Snapshot {{.BaseN}} is the most recent one you marked reviewed">showing changes since you last reviewed</span>
   {{end}}
 </form>
+{{end}}
 {{end}}
 
 {{define "rows"}}
@@ -221,6 +230,48 @@
         title="marks every file in this snapshot; later diffs default to showing changes since this one">
   {{if .Reviewed}}✓ reviewed{{else}}mark reviewed{{end}}
 </button>
+{{end}}
+
+{{define "commitblock"}}
+{{$q := print "?s=" .P.Target.N "&c=" .SHA}}
+<details class="commitblock{{if .Reviewed}} reviewed{{end}}{{if .Merge}} merge{{end}}" id="c-{{.SHA}}"{{if not .Reviewed}} open{{end}}>
+  <summary>
+    <span class="cidx">{{.Index}}</span>
+    <code title="{{.SHA}}">{{.ShortSHA}}</code>
+    <span class="csubj">{{.Subject}}</span>
+    {{if eq .Since "new"}}<span class="chip newchip" title="there was no version of this commit in snapshot {{.SinceN}}">new since snapshot {{.SinceN}}</span>
+    {{else if eq .Since "changed"}}<a class="chip changedchip" href="{{.P.PRURL}}/rangediff?base={{.SinceN}}&s={{.P.Target.N}}" title="some of this commit's changes differ from its version in snapshot {{.SinceN}}; click for the range-diff">changed since snapshot {{.SinceN}}</a>{{end}}
+    {{if .Merge}}<span class="chip">merge</span>{{end}}
+    {{if .Threads}}<span class="chip">{{plural .Threads "comment"}}</span>{{end}}
+    <span class="cright">
+      {{if not .Merge}}<span class="delta"><span class="plus">+{{.Added}}</span> <span class="minus">−{{.Deleted}}</span></span>
+      <span class="ccount">{{.NReviewed}}/{{len .Files}}</span>
+      <button class="reviewed{{if .Reviewed}} on{{end}}" data-post="{{.P.X "commitreviewed"}}{{$q}}" data-target="closest details" data-swap="outerHTML"
+              title="mark every file of this commit reviewed">{{if .Reviewed}}✓ reviewed{{else}}mark commit reviewed{{end}}</button>{{end}}
+    </span>
+  </summary>
+  {{if .Files}}
+  <div class="commitbody">
+    {{with .Body}}<details class="cmsgd"><summary>commit message</summary><pre class="cmsg">{{.}}</pre></details>{{end}}
+    <table class="filelist commitfiles">
+      <tbody>
+      {{range .Files}}
+      <tr class="item filerow" data-href="{{.URL}}" data-file="{{.Path}}" data-filter="{{.Path}}">
+        <td class="status status-{{.Char}}">{{.Char}}</td>
+        <td class="name"><a href="{{.URL}}">{{.Path}}</a></td>
+        <td class="delta">{{if .Binary}}binary{{else}}<span class="plus">+{{.Added}}</span> <span class="minus">−{{.Deleted}}</span>{{end}}</td>
+        <td class="counts">{{if .Threads}}<span class="chip">{{plural .Threads "comment"}}</span>{{end}}</td>
+        <td class="reviewedcell">
+          <button class="reviewed{{if .Reviewed}} on{{end}}" data-post="{{$.P.X "reviewed"}}{{$q}}&f={{.Path}}&block=1" data-target="closest details" data-swap="outerHTML">
+            {{if .Reviewed}}✓ reviewed{{else}}mark reviewed{{end}}</button>
+        </td>
+      </tr>
+      {{end}}
+      </tbody>
+    </table>
+  </div>
+  {{end}}
+</details>
 {{end}}
 
 {{define "replybox"}}

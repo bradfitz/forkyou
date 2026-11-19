@@ -1,6 +1,6 @@
 {{template "head" .}}
 <main class="diffpage">
-  <div id="viewinfo" hidden data-pr="{{.PRURL}}" data-base="{{.BaseN}}" data-target="{{.TargetN}}" data-latest="{{.LatestN}}" data-file="{{.FileParam}}"></div>
+  <div id="viewinfo" hidden data-pr="{{.PRURL}}" data-base="{{.BaseN}}" data-target="{{.TargetN}}" data-latest="{{.LatestN}}" data-file="{{.NavKey}}"></div>
   <div class="pagehead">
     <div>
       <h1>{{.File.Path}}</h1>
@@ -21,9 +21,9 @@
   {{end}}
 
   <nav class="filenav">
-    {{if .Prev}}<a id="prevfile" href="{{.Prev.URL}}">← {{.Prev.Name}}</a>{{else}}<span></span>{{end}}
-    <a id="filelistlink" href="{{.FilesURL}}">All files</a>
-    {{if .Next}}<a id="nextfile" href="{{.Next.URL}}">{{.Next.Name}} →</a>{{else}}<span></span>{{end}}
+    {{if .Prev}}<a id="prevfile" href="{{.Prev.URL}}">← {{if .Prev.CommitN}}[{{.Prev.CommitN}}] {{end}}{{.Prev.Name}}</a>{{else}}<span></span>{{end}}
+    <a id="filelistlink" href="{{.FilesURL}}">{{if .Commit}}All commits{{else}}All files{{end}}</a>
+    {{if .Next}}<a id="nextfile" href="{{.Next.URL}}">{{if .Next.CommitN}}[{{.Next.CommitN}}] {{end}}{{.Next.Name}} →</a>{{else}}<span></span>{{end}}
   </nav>
 
   <div id="filetop" class="filetop">

@@ -84,8 +84,9 @@ type Drafts struct {
 
 // A DraftThread is a new comment thread that has not been published.
 type DraftThread struct {
-	ID        string    `json:"id"`   // "d<n>"
-	Head      string    `json:"head"` // head commit of the snapshot it was written against
+	ID        string    `json:"id"`               // "d<n>"
+	Head      string    `json:"head"`             // head commit of the snapshot it was written against
+	Commit    string    `json:"commit,omitempty"` // the one commit it was written on, if any (see Thread.Commit)
 	File      string    `json:"file"`
 	Side      string    `json:"side"`                 // "old" (the snapshot's parent) or "new"
 	Line      int       `json:"line,omitempty"`       // 0 for a comment on the file as a whole
@@ -148,6 +149,9 @@ type Reviewed struct {
 	Files map[string]map[string]bool `json:"files,omitempty"`
 	// Snapshots is the set of snapshot heads marked reviewed.
 	Snapshots map[string]bool `json:"snapshots,omitempty"`
+	// Patches is the set of per-commit file changes marked reviewed, by
+	// fingerprint (see commits.go), which outlive the commit IDs.
+	Patches map[string]bool `json:"patches,omitempty"`
 }
 
 // Reviewed returns the reviewed marks for a pull request.
@@ -173,6 +177,9 @@ func (s *Store) UpdateReviewed(k PRKey, f func(*Reviewed)) error {
 	}
 	if r.Snapshots == nil {
 		r.Snapshots = map[string]bool{}
+	}
+	if r.Patches == nil {
+		r.Patches = map[string]bool{}
 	}
 	f(r)
 	return s.save(name, r)

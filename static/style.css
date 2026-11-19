@@ -966,3 +966,44 @@ pre.rangediff {
 /* GitHub's HTML carries its own line breaks; pre-wrap would add its
  * indentation and blank lines too. */
 .comment .body.markdown, .convitem .body.markdown { white-space: normal; }
+
+/* ---- commits ---- */
+.commitlist { margin: 0 0 16px; }
+.commitlist h2 { margin-bottom: 6px; }
+h2.wholehead { margin: 12px 0 4px; }
+details.commitblock { border: var(--border); border-radius: 4px; margin-bottom: 6px; background: #fff; }
+details.commitblock > summary {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 5px 8px;
+	cursor: pointer;
+	list-style: none;
+	background: var(--gray-50);
+	border-radius: 4px;
+}
+details.commitblock > summary::-webkit-details-marker { display: none; }
+details.commitblock > summary::before { content: "▸"; color: var(--gray-500); width: 1em; }
+details.commitblock[open] > summary::before { content: "▾"; }
+details.commitblock[open] > summary { border-bottom: var(--border); border-radius: 4px 4px 0 0; }
+details.commitblock.reviewed > summary { background: var(--green-50); }
+details.commitblock.reviewed .csubj { color: var(--gray-700); }
+.commitblock .cidx { color: var(--gray-500); font-family: var(--mono); font-size: 12px; min-width: 2ch; text-align: right; }
+.commitblock .csubj { font-weight: 500; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.commitblock .cright { display: flex; gap: 8px; align-items: center; margin-left: auto; white-space: nowrap; }
+.commitblock .delta { font-family: var(--mono); font-size: 11px; }
+.commitblock .delta .plus { color: var(--green-700); }
+.commitblock .delta .minus { color: var(--red-700); }
+.commitblock .ccount { color: var(--gray-500); font-size: 11px; font-family: var(--mono); }
+.commitblock .commitbody { padding: 4px 8px 6px 28px; }
+.commitblock pre.cmsg {
+	font-family: var(--mono);
+	font-size: 12px;
+	white-space: pre-wrap;
+	color: var(--gray-800);
+	margin: 4px 0 6px;
+}
+.chip.newchip { background: var(--blue-50); color: var(--blue-700); }
+.chip.changedchip { background: var(--orange-50); color: var(--orange-900); }
+.commitnav { gap: 10px; }
+.commitblock details.cmsgd > summary { cursor: pointer; color: var(--gray-500); font-size: 11px; margin: 2px 0; }

@@ -397,6 +397,8 @@
 		openFileList() {
 			const a = document.getElementById("filelistlink");
 			if (!a) return;
+			// A commit's link already names its place on the page.
+			if (a.href.includes("#")) { go(a.href); return; }
 			go(view.file ? a.href + "#" + encodeURIComponent(view.file) : a.href);
 		},
 

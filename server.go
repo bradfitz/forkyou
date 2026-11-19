@@ -105,6 +105,7 @@ func newServer(gh *GitHub, store *Store, gitDir, gitBase string) *server {
 	s.mux.HandleFunc("POST /{owner}/{repo}/pull/{num}/x/resolve", s.prHandle(s.resolveFrag))
 	s.mux.HandleFunc("POST /{owner}/{repo}/pull/{num}/x/reviewed", s.prHandle(s.reviewedFrag))
 	s.mux.HandleFunc("POST /{owner}/{repo}/pull/{num}/x/snapreviewed", s.prHandle(s.snapReviewedFrag))
+	s.mux.HandleFunc("POST /{owner}/{repo}/pull/{num}/x/commitreviewed", s.prHandle(s.commitReviewedFrag))
 	s.mux.HandleFunc("POST /{owner}/{repo}/pull/{num}/x/message", s.prHandle(s.messageFrag))
 	return s
 }
@@ -277,6 +278,7 @@ type prPage struct {
 	*View
 	BaseParam   string
 	TargetParam string
+	CommitParam string
 	FileParam   string
 	Threads     []*Thread // published and draft
 	Drafts      *Drafts
@@ -305,7 +307,7 @@ func (s *server) prPage(ctx context.Context, req *http.Request, k PRKey, page st
 	}
 	threads := allThreads(pr, d)
 	base, target := req.FormValue("base"), req.FormValue("s")
-	v, err := newView(ctx, pr, base, target, marks, threads)
+	v, err := newView(ctx, pr, base, target, req.FormValue("c"), marks, threads)
 	if err != nil {
 		return nil, err
 	}
@@ -317,6 +319,7 @@ func (s *server) prPage(ctx context.Context, req *http.Request, k PRKey, page st
 		BaseParam:   base,
 		TargetParam: target,
 		FileParam:   req.FormValue("f"),
+		CommitParam: req.FormValue("c"),
 		Threads:     threads,
 		Drafts:      d,
 		Marks:       marks,
@@ -332,8 +335,31 @@ func (s *server) prPage(ctx context.Context, req *http.Request, k PRKey, page st
 			p.Context = n
 		}
 	}
-	p.Reviewed = s.fileReviewed(ctx, pr, marks, v.Target)
+	if v.Commit != nil {
+		// A commit is always shown within a named snapshot, so that its
+		// links stay put when another push arrives.
+		p.CommitParam = v.Commit.SHA
+		p.TargetParam = strconv.Itoa(v.Target.N)
+		p.BaseParam = ""
+		p.Reviewed = map[string]bool{}
+		for _, f := range v.Commit.Files {
+			p.Reviewed[f.Path] = marks.Patches[f.FP]
+		}
+	} else {
+		p.Reviewed = s.fileReviewed(ctx, pr, marks, v.Target)
+	}
 	return p, nil
+}
+
+// CommitDiffURL is the diff of one file of one commit of the target snapshot.
+func (p *prPage) CommitDiffURL(sha, file string) string {
+	q := url.Values{"s": {strconv.Itoa(p.Target.N)}, "c": {sha}, "f": {file}}
+	return p.PRURL() + "/diff?" + q.Encode()
+}
+
+// CommitAnchor is the pull request page scrolled to a commit.
+func (p *prPage) CommitAnchor(sha string) string {
+	return p.PRURL() + "?s=" + strconv.Itoa(p.Target.N) + "#c-" + sha
 }
 
 // PP returns p, for templates given a page that embeds it.
@@ -351,6 +377,9 @@ func (p *prPage) query(extra ...string) string {
 	if p.TargetParam != "" {
 		q.Set("s", p.TargetParam)
 	}
+	if p.CommitParam != "" {
+		q.Set("c", p.CommitParam)
+	}
 	for i := 0; i+1 < len(extra); i += 2 {
 		q.Set(extra[i], extra[i+1])
 	}
@@ -364,8 +393,14 @@ func (p *prPage) query(extra ...string) string {
 // extra key-value pairs added.
 func (p *prPage) Query(kv ...string) string { return p.query(kv...) }
 
-// FilesURL is the file list for the comparison being shown.
-func (p *prPage) FilesURL() string { return p.PRURL() + p.query() }
+// FilesURL is the file list for the comparison being shown. For a
+// commit, that is its place in the pull request's list of commits.
+func (p *prPage) FilesURL() string {
+	if p.Commit != nil {
+		return p.CommitAnchor(p.Commit.SHA)
+	}
+	return p.PRURL() + p.query()
+}
 
 // DiffURL is the diff of a file in the comparison being shown.
 func (p *prPage) DiffURL(file string) string { return p.PRURL() + "/diff" + p.query("f", file) }
@@ -677,6 +712,8 @@ func render(w http.ResponseWriter, name string, data any) error {
 
 type fileRow struct {
 	*ViewFile
+	NavKey     string // names the file in a list that spans commits
+	CommitN    int    // the commit it is in, in such a list
 	URL        string
 	InlineURL  string
 	Reviewed   bool
@@ -716,6 +753,7 @@ type filesPage struct {
 	Resolved        []*threadFrag
 	Approvals       []string
 	ChangesReq      []string
+	CommitRows      []*commitRow
 	Flash           string
 }
 
@@ -803,6 +841,9 @@ func (s *server) filesPage(w http.ResponseWriter, req *http.Request, k PRKey) er
 	if cs, err := pr.Git.Log(ctx, pp.Target.Base, pp.Target.Head); err == nil {
 		p.Commits = cs
 	}
+	if len(p.Commits) > 1 {
+		p.CommitRows = pp.commitRows(ctx)
+	}
 	p.Conversation = pr.Conversation()
 	for _, t := range pp.Threads {
 		tf := &threadFrag{Thread: t, P: pp, Link: pp.ThreadLink(t)}
@@ -832,6 +873,7 @@ type diffPage struct {
 	FileRebaseOnly bool
 	Prev, Next     *fileRow
 	FilesJSON      template.JS
+	NavKey         string // names the file in FilesJSON
 }
 
 // ShowRebaseNote reports whether the diff needs the note explaining its
@@ -926,6 +968,7 @@ func (s *server) diffPage(w http.ResponseWriter, req *http.Request, k PRKey) err
 		rows = Unified(rows)
 	}
 	p := &diffPage{
+		NavKey:         f.Path,
 		prPage:         pp,
 		Binary:         fd.Binary,
 		Rebased:        AnyRebased(fd.Rows),
@@ -945,9 +988,30 @@ func (s *server) diffPage(w http.ResponseWriter, req *http.Request, k PRKey) err
 	}
 	var entries []fileEntry
 	frs := pp.fileRows()
+	if pp.Commit != nil {
+		// Within a commit, the list to walk is the whole stack's, a
+		// commit at a time, so that ] and M carry on into the next.
+		frs = nil
+		p.NavKey = pp.Commit.SHA + ":" + f.Path
+		for _, cr := range pp.commitRows(ctx) {
+			for _, cf := range cr.Files {
+				frs = append(frs, &fileRow{
+					ViewFile: &ViewFile{Path: cf.Path, Status: cf.Status, Added: cf.Added, Deleted: cf.Deleted},
+					URL:      cf.URL,
+					Reviewed: cf.Reviewed,
+					Resolved: cf.Threads,
+					NavKey:   cr.SHA + ":" + cf.Path,
+					CommitN:  cr.Index,
+				})
+			}
+		}
+	}
 	for i, fr := range frs {
-		entries = append(entries, fileEntry{fr.Path, fr.URL, fr.Threads(), fr.Reviewed, fr.Hidden()})
-		if fr.Path != f.Path {
+		if fr.NavKey == "" {
+			fr.NavKey = fr.Path
+		}
+		entries = append(entries, fileEntry{fr.NavKey, fr.URL, fr.Threads(), fr.Reviewed, fr.Hidden()})
+		if fr.NavKey != p.NavKey {
 			continue
 		}
 		p.File = fr
@@ -1108,14 +1172,20 @@ func (s *server) formFrag(w http.ResponseWriter, req *http.Request, k PRKey) err
 
 // sideTarget says what a side of the diff being shown is: which snapshot,
 // and which side of that snapshot.
-func (p *prPage) sideTarget(side string) (head, snapSide, rev string) {
+func (p *prPage) sideTarget(side string) (head, commit, snapSide, rev string) {
+	if p.Commit != nil {
+		if side == "left" {
+			return p.Target.Head, p.Commit.SHA, "old", p.Commit.Parents[0]
+		}
+		return p.Target.Head, p.Commit.SHA, "new", p.Commit.SHA
+	}
 	if side == "left" {
 		if p.Base != nil {
-			return p.Base.Head, "new", p.Base.Head
+			return p.Base.Head, "", "new", p.Base.Head
 		}
-		return p.Target.Head, "old", p.Target.Base
+		return p.Target.Head, "", "old", p.Target.Base
 	}
-	return p.Target.Head, "new", p.Target.Head
+	return p.Target.Head, "", "new", p.Target.Head
 }
 
 // commentFrag saves a new draft: a new thread, or a reply to a thread.
@@ -1156,7 +1226,7 @@ func (s *server) commentFrag(w http.ResponseWriter, req *http.Request, k PRKey) 
 	if side != "left" {
 		side = "right"
 	}
-	head, snapSide, rev := p.sideTarget(side)
+	head, commit, snapSide, rev := p.sideTarget(side)
 	file := req.FormValue("f")
 	line, start := atoi(req.FormValue("line")), atoi(req.FormValue("start"))
 	if start > line {
@@ -1176,7 +1246,7 @@ func (s *server) commentFrag(w http.ResponseWriter, req *http.Request, k PRKey) 
 	var dt *DraftThread
 	err = s.store.UpdateDrafts(k, func(d *Drafts) error {
 		dt = &DraftThread{
-			ID: d.newID(), Head: head, File: file, Side: snapSide, Line: line, StartLine: start,
+			ID: d.newID(), Head: head, Commit: commit, File: file, Side: snapSide, Line: line, StartLine: start,
 			Anchor: anchor, Body: body, Resolved: req.FormValue("resolve") == "1", Created: time.Now(),
 		}
 		d.Threads = append(d.Threads, dt)
@@ -1367,6 +1437,24 @@ func (s *server) reviewedFrag(w http.ResponseWriter, req *http.Request, k PRKey)
 	}
 	file := req.FormValue("f")
 	on := !p.Reviewed[file]
+	if p.Commit != nil {
+		var fp string
+		for _, f := range p.Commit.Files {
+			if f.Path == file {
+				fp = f.FP
+			}
+		}
+		if fp == "" {
+			return notFound("no file %q in commit %s", file, p.Commit.ShortSHA())
+		}
+		if err := s.store.UpdateReviewed(k, func(r *Reviewed) { r.Patches[fp] = on }); err != nil {
+			return err
+		}
+		if req.FormValue("block") != "" {
+			return s.renderCommitBlock(w, req, k)
+		}
+		return render(w, "reviewedbutton", map[string]any{"URL": p.X("reviewed") + p.Query("f", file), "Reviewed": on})
+	}
 	err = s.store.UpdateReviewed(k, func(r *Reviewed) {
 		m := r.Files[p.Target.Head]
 		if m == nil {
@@ -1423,6 +1511,46 @@ func (s *server) snapReviewedFrag(w http.ResponseWriter, req *http.Request, k PR
 	// The reviewed buttons all over the page have just changed.
 	w.Header().Set("X-Refresh", "1")
 	return render(w, "snapreviewedbutton", map[string]any{"URL": req.URL.String(), "Reviewed": on})
+}
+
+// commitReviewedFrag marks every file of a commit reviewed, or unmarks
+// them all if they all were, and returns the commit's block as it now
+// stands, which folds away once reviewed.
+func (s *server) commitReviewedFrag(w http.ResponseWriter, req *http.Request, k PRKey) error {
+	p, err := s.fragPage(req, k)
+	if err != nil {
+		return err
+	}
+	if p.Commit == nil {
+		return badRequest("no commit named")
+	}
+	all := len(p.Commit.Files) > 0
+	for _, f := range p.Commit.Files {
+		all = all && p.Marks.Patches[f.FP]
+	}
+	err = s.store.UpdateReviewed(k, func(r *Reviewed) {
+		for _, f := range p.Commit.Files {
+			r.Patches[f.FP] = !all
+		}
+	})
+	if err != nil {
+		return err
+	}
+	return s.renderCommitBlock(w, req, k)
+}
+
+// renderCommitBlock draws one commit's block in the pull request's list.
+func (s *server) renderCommitBlock(w http.ResponseWriter, req *http.Request, k PRKey) error {
+	p, err := s.fragPage(req, k)
+	if err != nil {
+		return err
+	}
+	for _, r := range p.commitRows(req.Context()) {
+		if r.SHA == p.Commit.SHA {
+			return render(w, "commitblock", r)
+		}
+	}
+	return notFound("no commit %s", p.CommitParam)
 }
 
 // messageFrag saves the draft of the review's own message as it is typed,

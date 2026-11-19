@@ -57,13 +57,13 @@
 
   {{template "baseselect" .}}
 
-  {{if gt (len .Commits) 1}}
-  <details class="commits">
-    <summary>{{len .Commits}} commits in snapshot {{.TargetN}}</summary>
-    <ol>
-      {{range .Commits}}<li><code>{{.ShortSHA}}</code> {{.Subject}} <span class="when">{{.Author}}</span></li>{{end}}
-    </ol>
-  </details>
+  {{if .CommitRows}}
+  <section class="commitlist">
+    <h2>{{len .CommitRows}} commits in snapshot {{.TargetN}}
+      <span class="hint">review a commit at a time; reviewed commits fold away, and stay reviewed in later snapshots that leave their changes alone</span></h2>
+    {{range .CommitRows}}{{template "commitblock" .}}{{end}}
+  </section>
+  <h2 class="wholehead">All changes in snapshot {{.TargetN}}</h2>
   {{end}}
 
   <div class="filelisthead">

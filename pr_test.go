@@ -95,24 +95,24 @@ func forced(sha string, when time.Time) GHTimelineEvent {
 }
 
 func TestBuildSnapshotsCoalesce(t *testing.T) {
-	// Three commits made a few seconds apart are one push. A fourth an
-	// hour later is another.
+	// A chain of commits is one push, however far apart they were made:
+	// a stack is written over days and pushed at once.
 	tl := []GHTimelineEvent{
 		committed("aaaa0000", "base", at(0)),
 		committed("bbbb0000", "aaaa0000", at(1)),
-		committed("cccc0000", "bbbb0000", at(1)),
-		committed("dddd0000", "cccc0000", at(60)),
+		committed("cccc0000", "bbbb0000", at(30)),
+		committed("dddd0000", "cccc0000", at(600)),
 	}
-	pull := &GHPull{Head: GHRef{SHA: "dddd0000"}, UpdatedAt: at(61)}
+	pull := &GHPull{Head: GHRef{SHA: "dddd0000"}, UpdatedAt: at(601)}
 	got := heads(buildSnapshots(pull, tl, nil, nil))
-	if want := []string{"cccc0000", "dddd0000"}; !equalStrings(got, want) {
+	if want := []string{"dddd0000"}; !equalStrings(got, want) {
 		t.Errorf("snapshots = %v, want %v", got, want)
 	}
 
 	// A review of the middle commit says it was once the head.
 	reviews := []GHReview{{State: "COMMENTED", CommitID: "bbbb0000", SubmittedAt: at(2)}}
 	got = heads(buildSnapshots(pull, tl, reviews, nil))
-	if want := []string{"bbbb0000", "cccc0000", "dddd0000"}; !equalStrings(got, want) {
+	if want := []string{"bbbb0000", "dddd0000"}; !equalStrings(got, want) {
 		t.Errorf("with review: snapshots = %v, want %v", got, want)
 	}
 }

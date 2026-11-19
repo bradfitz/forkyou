@@ -29,6 +29,10 @@ type View struct {
 	Target   *Snapshot
 	AutoBase bool // Base was chosen as the last snapshot marked reviewed
 	Files    []*ViewFile
+	// Commit, if set, narrows the view to one commit of Target,
+	// compared with its parent.
+	Commit   *CommitInfo
+	NCommits int // commits in Target, when Commit is set
 }
 
 // A ViewFile is one file in a view.
@@ -60,6 +64,9 @@ func (f *ViewFile) Char() string {
 
 // LeftRev is the commit shown on the left.
 func (v *View) LeftRev() string {
+	if v.Commit != nil {
+		return v.Commit.Parents[0]
+	}
 	if v.Base != nil {
 		return v.Base.Head
 	}
@@ -67,11 +74,18 @@ func (v *View) LeftRev() string {
 }
 
 // RightRev is the commit shown on the right.
-func (v *View) RightRev() string { return v.Target.Head }
+func (v *View) RightRev() string {
+	if v.Commit != nil {
+		return v.Commit.SHA
+	}
+	return v.Target.Head
+}
 
 // Rebased reports whether the two sides sit on different parents, which
 // is when lines can have come along with a rebase.
-func (v *View) Rebased() bool { return v.Base != nil && v.Base.Base != v.Target.Base }
+func (v *View) Rebased() bool {
+	return v.Commit == nil && v.Base != nil && v.Base.Base != v.Target.Base
+}
 
 // BaseN returns the number of the base snapshot, or 0 for the parent.
 func (v *View) BaseN() int {
@@ -104,7 +118,7 @@ var errNoSnapshot = fmt.Errorf("no snapshot of this pull request could be fetche
 // automatically, "parent", or a snapshot number; target is "" for the
 // newest snapshot, or a number. threads lists every thread, so that a
 // file carrying a comment stays in the list even when its diff is empty.
-func newView(ctx context.Context, pr *PR, base, target string, marks *Reviewed, threads []*Thread) (*View, error) {
+func newView(ctx context.Context, pr *PR, base, target, commit string, marks *Reviewed, threads []*Thread) (*View, error) {
 	v := &View{PR: pr}
 	if n, err := strconv.Atoi(target); err == nil {
 		v.Target = pr.Snapshot(n)
@@ -139,6 +153,19 @@ func newView(ctx context.Context, pr *PR, base, target string, marks *Reviewed, 
 				v.Base = s
 			}
 		}
+	}
+	if commit != "" {
+		v.Commit = pr.CommitBySHA(ctx, v.Target, commit)
+		if v.Commit == nil || v.Commit.Merge {
+			return nil, notFound("no commit %s in snapshot %d", commit, v.Target.N)
+		}
+		v.Base, v.AutoBase = nil, false
+		v.NCommits = len(pr.Commits(ctx, v.Target))
+		for _, f := range v.Commit.Files {
+			v.Files = append(v.Files, &ViewFile{Path: f.Path, Status: f.Status, OldOID: f.OldOID, NewOID: f.NewOID, Own: true,
+				Added: f.Added, Deleted: f.Deleted, Binary: f.Binary})
+		}
+		return v, nil
 	}
 	if err := v.listFiles(ctx, threads); err != nil {
 		return nil, err
@@ -240,6 +267,9 @@ func (v *View) Contents(ctx context.Context, f *ViewFile) (old, new []byte) {
 // rebase marked. Diffs are cached, since a page draws the file list's
 // counts and then, often, the very same file.
 func (v *View) Diff(ctx context.Context, f *ViewFile) *FileDiff {
+	if f.Status != 0 && !v.Rebased() {
+		return v.PR.blobDiff(ctx, f.OldOID, f.NewOID)
+	}
 	key := v.LeftRev() + " " + v.RightRev() + " " + f.Path
 	v.PR.mu.Lock()
 	fd := v.PR.diffs[key]
@@ -274,6 +304,15 @@ const anchorSearch = 25
 // the exact text the comment was attached to, nearest its original line,
 // and reports stale if that text can no longer be found.
 func Anchor(t *Thread, lines []string) (line int, stale bool) {
+	return AnchorWithin(t, lines, anchorSearch)
+}
+
+// AnchorWithin is Anchor looking at most radius lines away, or anywhere
+// in the file if radius is negative.
+func AnchorWithin(t *Thread, lines []string, radius int) (line int, stale bool) {
+	if radius < 0 {
+		radius = len(lines) + t.Line
+	}
 	if t.Line <= 0 {
 		return 0, false // a comment on the file as a whole is always in place
 	}
@@ -286,7 +325,7 @@ func Anchor(t *Thread, lines []string) (line int, stale bool) {
 	if t.Line <= len(lines) && lines[t.Line-1] == t.Anchor {
 		return t.Line, false
 	}
-	for d := 1; d <= anchorSearch; d++ {
+	for d := 1; d <= radius; d++ {
 		for _, n := range [2]int{t.Line - d, t.Line + d} {
 			if n >= 1 && n <= len(lines) && lines[n-1] == t.Anchor {
 				return n, false
@@ -306,6 +345,39 @@ func (v *View) PlaceThreads(all []*Thread, file string, oldLines, newLines []str
 		}
 		t = t.clone()
 		t.Other, t.Stale = false, false
+		if v.Commit != nil {
+			// A commit's own threads go where they were written. Any
+			// other is shown only if its line is here too, as a remark
+			// about some other version of the same code: listing every
+			// thread that does not fit as stale would bury the commit's
+			// own under the rest of the pull request's.
+			lines, side := newLines, "new"
+			if t.Commit == v.Commit.SHA {
+				if t.Side == "old" {
+					lines, side = oldLines, "old"
+				}
+			} else {
+				t.Other = true
+			}
+			t.ShowLine, t.Stale = Anchor(t, lines)
+			if t.Stale || (t.Other && t.Line == 0) {
+				continue
+			}
+			if side == "old" {
+				left = append(left, t)
+			} else {
+				right = append(right, t)
+			}
+			continue
+		}
+		if t.Commit != "" {
+			// Written on one commit; on a snapshot it is a remark about
+			// the code as it is now, if that line is still there.
+			t.Other = true
+			t.ShowLine, t.Stale = Anchor(t, newLines)
+			right = append(right, t)
+			continue
+		}
 		switch {
 		case t.Head == v.Target.Head && t.Side == "new":
 			t.ShowLine, t.Stale = Anchor(t, newLines)
@@ -374,6 +446,7 @@ func allThreads(pr *PR, d *Drafts) []*Thread {
 		t := &Thread{
 			ID:        dt.ID,
 			Head:      dt.Head,
+			Commit:    dt.Commit,
 			File:      dt.File,
 			Side:      dt.Side,
 			Line:      dt.Line,

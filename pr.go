@@ -61,9 +61,10 @@ type PR struct {
 	FetchedAt     time.Time
 	Git           *GitRepo
 
-	mu    sync.Mutex
-	blobs map[string][]byte    // by "rev:path" or OID
-	diffs map[string]*FileDiff // by diffKey
+	mu      sync.Mutex
+	blobs   map[string][]byte        // by "rev:path" or OID
+	diffs   map[string]*FileDiff     // by diffKey
+	commits map[string][]*CommitInfo // by snapshot head
 }
 
 // Latest returns the newest snapshot, or nil if there are none.
@@ -114,13 +115,6 @@ type pushCandidate struct {
 	order  int
 }
 
-// coalesceWindow is how close together two commits must have been made
-// for a run of them to be taken as one push. GitHub's timeline lists the
-// commits of a regular push one by one and says nothing about which push
-// brought each, so this is a guess, but a deterministic one: everybody
-// looking sees the same snapshots.
-const coalesceWindow = 2 * time.Minute
-
 // buildSnapshots works out the snapshots of a pull request from GitHub's
 // record of it. Its evidence:
 //
@@ -131,8 +125,13 @@ const coalesceWindow = 2 * time.Minute
 //     often the only remaining trace of a head that was force-pushed away;
 //   - the pull request's current head.
 //
-// Runs of commits made close together, each the parent of the next, are
-// taken as one push. The result is in push order, numbered from 1.
+// GitHub's timeline lists the commits of a regular push one by one and
+// says nothing about which push brought each. So a chain of commits, each
+// the parent of the next, is taken as one push unless something says one
+// of them was the head on its own: a review of it, or a force push to it.
+// It is a guess, but a deterministic one, so everybody sees the same
+// snapshots, and it is right for the common case of a stack of commits
+// written over days and pushed at once. The result is in push order, numbered from 1.
 // Bases are not filled in: that needs git.
 func buildSnapshots(pull *GHPull, timeline []GHTimelineEvent, reviews []GHReview, forcePushes []GQLForcePush) []*Snapshot {
 	var cands []pushCandidate
@@ -176,14 +175,31 @@ func buildSnapshots(pull *GHPull, timeline []GHTimelineEvent, reviews []GHReview
 			add(pushCandidate{sha: r.CommitID, t: r.SubmittedAt, kind: "reviewed"})
 		}
 	}
+	// Commits by ID, for walking the chain a force push brought.
+	commitAt := map[string]pushCandidate{}
+	for _, c := range cands {
+		if c.kind == "commit" {
+			commitAt[c.sha] = c
+		}
+	}
 	for _, fp := range forcePushes {
 		who := ""
 		if fp.Actor != nil {
 			who = fp.Actor.Login
 		}
 		if fp.BeforeCommit != nil {
-			// The replaced head was there just before the push.
-			add(pushCandidate{sha: fp.BeforeCommit.OID, t: fp.CreatedAt.Add(-time.Millisecond), kind: "before"})
+			// The replaced head was there until the push, and before
+			// every commit the push brought, which were made (by a rebase,
+			// say) before they were pushed.
+			t := fp.CreatedAt
+			if fp.AfterCommit != nil {
+				for c, ok := commitAt[fp.AfterCommit.OID]; ok; c, ok = commitAt[c.parent] {
+					if !c.t.IsZero() && c.t.Before(t) {
+						t = c.t
+					}
+				}
+			}
+			add(pushCandidate{sha: fp.BeforeCommit.OID, t: t.Add(-time.Millisecond), kind: "before"})
 		}
 		if fp.AfterCommit != nil {
 			add(pushCandidate{sha: fp.AfterCommit.OID, t: fp.CreatedAt, kind: "force", who: who})
@@ -254,15 +270,12 @@ func buildSnapshots(pull *GHPull, timeline []GHTimelineEvent, reviews []GHReview
 	}
 
 	// Coalesce a run of commits pushed together: drop a commit when the
-	// next is its child, made within the window, and nothing else says
-	// the dropped one was ever a head.
+	// next is its child and nothing else says the dropped one was ever a
+	// head.
 	var kept []*entry
 	for i, e := range entries {
-		if i+1 < len(entries) && e.onlyRun {
-			next := entries[i+1]
-			if next.parent == e.sha && !next.t.IsZero() && next.t.Sub(e.t) < coalesceWindow {
-				continue
-			}
+		if i+1 < len(entries) && e.onlyRun && entries[i+1].parent == e.sha {
+			continue
 		}
 		kept = append(kept, e)
 	}
@@ -292,6 +305,10 @@ type Thread struct {
 	NodeID    string // GraphQL ID, for resolving
 	Head      string // head of the snapshot it belongs to
 	SnapshotN int
+	// Commit, if set, is the single commit of the snapshot the thread
+	// was written on, in which case Side is a side of that commit's own
+	// diff: "new" is the commit and "old" its parent.
+	Commit    string
 	File      string
 	Side      string // "old" or "new"
 	Line      int    // 0 for the file as a whole
@@ -454,6 +471,11 @@ func (pr *PR) placeOnSnapshot(ctx context.Context, t *Thread, orig string) {
 		return
 	}
 	t.Head, t.SnapshotN = snap.Head, snap.N
+	if snap.Head != orig && orig != "" {
+		// Written while looking at one commit, GitHub's commit view,
+		// where the left side is the commit's parent.
+		t.Commit = orig
+	}
 	if t.Line <= 0 {
 		return
 	}
@@ -461,8 +483,8 @@ func (pr *PR) placeOnSnapshot(ctx context.Context, t *Thread, orig string) {
 	if t.Side == "old" {
 		if snap.Head == orig {
 			rev = snap.Base
-		} else if mb, err := pr.Git.MergeBase(ctx, orig, pr.Pull.Base.SHA); err == nil {
-			rev = mb
+		} else {
+			rev = orig + "^"
 		}
 	}
 	if rev == "" {

@@ -115,42 +115,67 @@ type ghPlace struct {
 // snapshot latest, whose GitHub diff has the given hunks.
 func placeDraft(ctx context.Context, pr *PR, dt *DraftThread, latest *Snapshot, hunks map[string][]hunk) ghPlace {
 	p := ghPlace{Path: dt.File, Side: "RIGHT", Body: dt.Body}
-	if dt.Side == "old" {
-		p.Side = "LEFT"
-	}
 	fileHunks, inDiff := hunks[dt.File]
 	snap := pr.SnapshotByHead(dt.Head)
 	if snap == nil {
 		snap = latest
 	}
-	src, dst := snap.Head, latest.Head
-	if dt.Side == "old" {
-		src, dst = snap.Base, latest.Base
+
+	// Where the comment was written, and where it might be now: the same
+	// side of the newest snapshot, or for a comment on one commit of a
+	// stack, the newest head first, since the line a commit's parent has
+	// was as likely written by an earlier commit as found in the base.
+	type place struct {
+		rev, side string
+	}
+	src := snap.Head
+	dsts := []place{{latest.Head, "RIGHT"}}
+	radius := anchorSearch
+	switch {
+	case dt.Commit != "":
+		src = dt.Commit
+		if dt.Side == "old" {
+			src = dt.Commit + "^"
+			dsts = append(dsts, place{latest.Base, "LEFT"})
+		}
+		// Line numbers in one commit of a stack can be far from where
+		// the line ends up, so look for it anywhere.
+		radius = -1
+	case dt.Side == "old":
+		src = snap.Base
+		dsts = []place{{latest.Base, "LEFT"}}
 	}
 	srcLines := pr.lines(ctx, src, dt.File)
-	quote := quoteLines(dt.File, srcLines, dt.StartLine, dt.Line, snap, latest, dt.Side)
-
+	quote := quoteLines(dt, srcLines, snap, latest)
 	if dt.Line > 0 {
-		line, start := dt.Line, dt.StartLine
-		found := true
-		if src != dst {
-			t := &Thread{Line: dt.Line, Anchor: dt.Anchor}
-			if t.Anchor == "" && dt.Line <= len(srcLines) {
-				t.Anchor = srcLines[dt.Line-1]
-			}
-			n, stale := Anchor(t, pr.lines(ctx, dst, dt.File))
-			found = !stale
-			if start > 0 {
-				start += n - line
-			}
-			line = n
+		t := &Thread{Line: dt.Line, Anchor: dt.Anchor}
+		if t.Anchor == "" && dt.Line <= len(srcLines) {
+			t.Anchor = srcLines[dt.Line-1]
 		}
-		if found && inHunk(fileHunks, p.Side, start, line) {
-			p.Line = line
-			if start > 0 && start != line {
-				p.StartLine = start
+		for _, d := range dsts {
+			line, start := dt.Line, dt.StartLine
+			if d.rev != src {
+				n, stale := AnchorWithin(t, pr.lines(ctx, d.rev, dt.File), radius)
+				if stale {
+					continue
+				}
+				if start > 0 {
+					start += n - line
+				}
+				line = n
 			}
-			return p
+			if inHunk(fileHunks, d.side, start, line) {
+				p.Line, p.Side = line, d.side
+				if start > 0 && start != line {
+					p.StartLine = start
+				}
+				if dt.Commit != "" && dt.Commit != latest.Head {
+					// Say which commit it was about, which the line alone
+					// no longer does.
+					p.Body = fmt.Sprintf("(On commit %s.)\n\n%s", shortRev(dt.Commit), dt.Body)
+				}
+				return p
+			}
 		}
 	}
 	p.Body = quote + dt.Body
@@ -183,12 +208,28 @@ func inHunk(hs []hunk, side string, start, line int) bool {
 // quoteLines quotes the lines a comment was written about, for a comment
 // that cannot be attached to them on GitHub, so that it still says what
 // it is about.
-func quoteLines(file string, lines []string, start, line int, snap, latest *Snapshot, side string) string {
-	if line <= 0 {
-		if snap != latest {
-			return fmt.Sprintf("(On `%s` in snapshot %d.)\n\n", file, snap.N)
+func quoteLines(dt *DraftThread, lines []string, snap, latest *Snapshot) string {
+	file, start, line := dt.File, dt.StartLine, dt.Line
+	in := ""
+	switch {
+	case dt.Commit != "":
+		in = " in commit " + shortRev(dt.Commit)
+		if dt.Side == "old" {
+			in = " in the parent of commit " + shortRev(dt.Commit)
 		}
-		return ""
+	case snap != latest:
+		in = fmt.Sprintf(" in snapshot %d (%s)", snap.N, snap.ShortRev())
+		if dt.Side == "old" {
+			in = fmt.Sprintf(" of the base of snapshot %d", snap.N)
+		}
+	case dt.Side == "old":
+		in = " of the base"
+	}
+	if line <= 0 {
+		if in == "" {
+			return ""
+		}
+		return fmt.Sprintf("(On `%s`%s.)\n\n", file, in)
 	}
 	if start <= 0 || start > line {
 		start = line
@@ -196,12 +237,6 @@ func quoteLines(file string, lines []string, start, line int, snap, latest *Snap
 	where := fmt.Sprintf("line %d", line)
 	if start != line {
 		where = fmt.Sprintf("lines %d-%d", start, line)
-	}
-	if side == "old" {
-		where += " of the base"
-	}
-	if snap != latest {
-		where += fmt.Sprintf(" in snapshot %d (%s)", snap.N, snap.ShortRev())
 	}
 	var code []string
 	for n := start; n <= line && n <= len(lines); n++ {
@@ -211,7 +246,7 @@ func quoteLines(file string, lines []string, start, line int, snap, latest *Snap
 	for strings.Contains(strings.Join(code, "\n"), fence) {
 		fence += "`"
 	}
-	return fmt.Sprintf("`%s` %s:\n%s\n%s\n%s\n\n", file, where, fence, strings.Join(code, "\n"), fence)
+	return fmt.Sprintf("`%s` %s%s:\n%s\n%s\n%s\n\n", file, where, in, fence, strings.Join(code, "\n"), fence)
 }
 
 // A publishResult says what publishing did.
