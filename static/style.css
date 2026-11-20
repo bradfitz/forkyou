@@ -710,6 +710,7 @@ tr.threadrow td.threadcell {
 	border: var(--border);
 	border-radius: 4px;
 	resize: vertical;
+	field-sizing: content;
 }
 .formactions { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
 .resolvebox { color: var(--gray-700); }
